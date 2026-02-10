@@ -18,78 +18,13 @@ const tabIcons = [
   <svg key="store" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9l1-4h16l1 4M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9" /><path d="M9 21V13h6v8" /></svg>,
 ]
 
-const mockupScenes = [
-  // Fields Management
-  (
-    <g key="fields">
-      <rect x="20" y="30" width="120" height="80" rx="8" fill="rgba(13,153,132,0.15)" stroke="rgba(13,153,132,0.3)" strokeWidth="1" />
-      <rect x="150" y="30" width="90" height="35" rx="8" fill="rgba(13,153,132,0.1)" stroke="rgba(13,153,132,0.2)" strokeWidth="1" />
-      <rect x="150" y="75" width="90" height="35" rx="8" fill="rgba(245,166,35,0.1)" stroke="rgba(245,166,35,0.2)" strokeWidth="1" />
-      <circle cx="60" cy="60" r="6" fill="rgba(39,202,64,0.4)" />
-      <circle cx="90" cy="75" r="4" fill="rgba(39,202,64,0.3)" />
-      <circle cx="45" cy="85" r="5" fill="rgba(245,166,35,0.3)" />
-      <text x="20" y="130" fill="rgba(255,255,255,0.3)" fontSize="10" fontFamily="DM Sans">12 Active Fields</text>
-    </g>
-  ),
-  // Weather
-  (
-    <g key="weather">
-      <circle cx="80" cy="50" r="20" fill="rgba(245,166,35,0.2)" stroke="rgba(245,166,35,0.3)" strokeWidth="1" />
-      <circle cx="80" cy="50" r="10" fill="rgba(245,166,35,0.3)" />
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-        <line key={angle} x1={80 + Math.cos(angle * Math.PI / 180) * 14} y1={50 + Math.sin(angle * Math.PI / 180) * 14} x2={80 + Math.cos(angle * Math.PI / 180) * 22} y2={50 + Math.sin(angle * Math.PI / 180) * 22} stroke="rgba(245,166,35,0.2)" strokeWidth="1.5" />
-      ))}
-      <rect x="140" y="30" width="100" height="90" rx="8" fill="rgba(255,255,255,0.03)" />
-      <text x="155" y="55" fill="rgba(255,255,255,0.5)" fontSize="11">28°C</text>
-      <text x="155" y="75" fill="rgba(255,255,255,0.25)" fontSize="9">Partly Cloudy</text>
-      <rect x="155" y="85" width="70" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
-      <rect x="155" y="85" width="45" height="4" rx="2" fill="rgba(13,153,132,0.3)" />
-      <text x="155" y="105" fill="rgba(255,255,255,0.2)" fontSize="8">Humidity: 65%</text>
-    </g>
-  ),
-  // Scouting
-  (
-    <g key="scouting">
-      <rect x="20" y="30" width="220" height="90" rx="8" fill="rgba(255,255,255,0.03)" />
-      <rect x="30" y="40" width="60" height="60" rx="6" fill="rgba(13,153,132,0.1)" />
-      <rect x="100" y="45" width="80" height="6" rx="3" fill="rgba(255,255,255,0.15)" />
-      <rect x="100" y="58" width="120" height="4" rx="2" fill="rgba(255,255,255,0.08)" />
-      <rect x="100" y="68" width="100" height="4" rx="2" fill="rgba(255,255,255,0.06)" />
-      <rect x="100" y="82" width="40" height="16" rx="8" fill="rgba(39,202,64,0.2)" />
-      <text x="108" y="93" fill="rgba(39,202,64,0.6)" fontSize="8">Healthy</text>
-      <circle cx="60" cy="70" r="12" fill="none" stroke="rgba(13,153,132,0.3)" strokeWidth="1.5" strokeDasharray="3 3" />
-    </g>
-  ),
-  // Finance
-  (
-    <g key="finance">
-      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-        const heights = [35, 55, 40, 70, 50, 80, 60, 75]
-        const h = heights[i] ?? 40
-        return (
-          <rect key={i} x={30 + i * 28} y={120 - h} width="18" height={h} rx="4" fill={i % 2 === 0 ? 'rgba(13,153,132,0.3)' : 'rgba(13,153,132,0.15)'} />
-        )
-      })}
-      <line x1="20" y1="120" x2="250" y2="120" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-      <text x="20" y="28" fill="rgba(255,255,255,0.4)" fontSize="11">Revenue Overview</text>
-      <text x="180" y="28" fill="rgba(39,202,64,0.5)" fontSize="10">+12.5%</text>
-    </g>
-  ),
-  // Store
-  (
-    <g key="store">
-      {[0, 1, 2].map((i) => (
-        <g key={i}>
-          <rect x={20 + i * 80} y="30" width="70" height="90" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <rect x={28 + i * 80} y="38" width="54" height="35" rx="4" fill="rgba(13,153,132,0.08)" />
-          <rect x={28 + i * 80} y="82" width="40" height="5" rx="2.5" fill="rgba(255,255,255,0.12)" />
-          <rect x={28 + i * 80} y="94" width="54" height="4" rx="2" fill="rgba(255,255,255,0.06)" />
-          <rect x={28 + i * 80} y="106" width="30" height="6" rx="3" fill="rgba(245,166,35,0.2)" />
-        </g>
-      ))}
-    </g>
-  ),
-]
+const tabImages: Record<string, string> = {
+  'Field Management': '/images/appture/Field Management.jpg',
+  'Weather Intelligence': '/images/appture/Weather Intelligence.jpg',
+  'Scouting and Notes': '/images/appture/Scouting and Notes.png',
+  'Expenses and Income': '/images/appture/Expenses and Income.png',
+  'Store Front': '/images/appture/Store Front.png',
+}
 
 export default function ProductTour() {
   const [activeTab, setActiveTab] = useState(0)
@@ -249,11 +184,15 @@ export default function ProductTour() {
                         </div>
                       </div>
 
-                      {/* SVG Scene */}
-                      <div className="rounded-lg bg-white/[0.02] p-2" style={{ minHeight: '160px' }}>
-                        <svg viewBox="0 0 260 140" width="100%" className="overflow-visible">
-                          {mockupScenes[activeTab]}
-                        </svg>
+                      {/* Product image */}
+                      <div className="rounded-lg bg-white/[0.02] p-2">
+                        <img
+                          src={tabImages[productTour.modules[activeTab]?.title ?? '']}
+                          alt={productTour.modules[activeTab]?.title ?? ''}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-auto w-full rounded-md object-cover"
+                        />
                       </div>
                     </div>
                   </div>

@@ -642,9 +642,9 @@ export default function Problem() {
           </svg>
         </div>
 
-        <FloatingShapes inView={inView} />
+        {/* <FloatingShapes inView={inView} />
         <ConstellationBg inView={inView} />
-        <AmbientOrbs inView={inView} />
+        <AmbientOrbs inView={inView} /> */}
         <CursorGlow />
 
         {/* Grain */}
