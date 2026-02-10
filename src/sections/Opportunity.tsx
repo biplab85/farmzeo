@@ -406,7 +406,7 @@ export default function Opportunity() {
       <ConstellationBg inView={inView} />
       <EmeraldOrbs inView={inView} />
 
-      <div ref={ref} className="relative z-10 pb-0 pt-28 md:pt-36 lg:pt-10">
+      <div ref={ref} className="relative z-10 pb-20 pt-28 md:pb-28 md:pt-36 lg:pb-32 lg:pt-32">
         <Container>
           {/* Header */}
           <div className="text-center">

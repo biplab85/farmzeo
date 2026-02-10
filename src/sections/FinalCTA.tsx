@@ -39,7 +39,7 @@ export default function FinalCTA() {
         />
       ))}
 
-      <div className="relative z-10 py-24 md:py-32 lg:py-40">
+      <div className="relative z-10 py-20 md:py-28 lg:py-32">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <SplitText as="h2" className="font-heading text-[32px] font-bold text-white md:text-[40px] lg:text-[52px] lg:leading-[60px]">

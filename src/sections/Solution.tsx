@@ -426,7 +426,7 @@ export default function Solution() {
 
       <section
         ref={sectionRef}
-        className="sol-animate relative overflow-hidden py-16 md:py-24 lg:py-40"
+        className="sol-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
           background: 'linear-gradient(180deg, #F7FAFA 0%, #FFFFFF 45%, #FFFFFF 65%, #FAFBFB 100%)',
         }}

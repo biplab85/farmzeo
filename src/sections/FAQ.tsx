@@ -1,10 +1,34 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
 import ScrollReveal from '../components/ScrollReveal'
 import { faq } from '../content'
 
+/* ─── floating "?" particles ─── */
+const floatingMarks = [
+  { x: '6%', y: '12%', size: 28, opacity: 0.04, dur: '22s', dx: 20, dy: -25, rotate: 15 },
+  { x: '88%', y: '8%', size: 36, opacity: 0.03, dur: '28s', dx: -25, dy: 20, rotate: -20 },
+  { x: '14%', y: '78%', size: 22, opacity: 0.05, dur: '24s', dx: 15, dy: -18, rotate: 10 },
+  { x: '82%', y: '72%', size: 30, opacity: 0.035, dur: '26s', dx: -20, dy: -22, rotate: -15 },
+  { x: '50%', y: '5%', size: 20, opacity: 0.04, dur: '30s', dx: 18, dy: 15, rotate: 25 },
+  { x: '92%', y: '45%', size: 24, opacity: 0.03, dur: '32s', dx: -15, dy: 20, rotate: -12 },
+  { x: '4%', y: '45%', size: 32, opacity: 0.03, dur: '27s', dx: 22, dy: -15, rotate: 18 },
+  { x: '35%', y: '92%', size: 26, opacity: 0.04, dur: '25s', dx: -18, dy: -20, rotate: -22 },
+]
+
+/* ─── keyframes for floating marks ─── */
+const floatCSS = floatingMarks.map((m, i) => `
+  .faq-float-${i}{animation:faqF${i} ${m.dur} ease-in-out infinite}
+  @keyframes faqF${i}{
+    0%,100%{transform:translate(0,0) rotate(0deg)}
+    25%{transform:translate(${m.dx * 0.6}px,${m.dy * 0.4}px) rotate(${m.rotate * 0.5}deg)}
+    50%{transform:translate(${m.dx}px,${m.dy}px) rotate(${m.rotate}deg)}
+    75%{transform:translate(${m.dx * 0.3}px,${m.dy * 0.7}px) rotate(${m.rotate * 0.3}deg)}
+  }
+`).join('')
+
+/* ─── accordion item ─── */
 function AccordionItem({
   question,
   answer,
@@ -24,54 +48,178 @@ function AccordionItem({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.06, duration: 0.5 }}
-      className={`border-t border-gray-200 transition-colors ${isOpen ? 'border-l-[3px] border-l-secondary pl-5' : 'border-l-[3px] border-l-transparent pl-5'}`}
+      className="group"
     >
-      <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between py-5 text-left transition-colors"
-        aria-expanded={isOpen}
+      <div
+        className={`rounded-xl border transition-all duration-400 ${
+          isOpen
+            ? 'border-secondary/20 bg-secondary/[0.03] shadow-[0_4px_24px_rgba(13,153,132,0.06)]'
+            : 'border-gray-200/60 bg-transparent hover:border-secondary/15 hover:bg-secondary/[0.01]'
+        }`}
       >
-        <span className={`pr-4 font-heading text-[17px] font-semibold transition-colors duration-300 ${isOpen ? 'text-secondary-600' : 'text-primary-600'}`}>
-          {question}
-        </span>
-        <span className="relative flex h-6 w-6 shrink-0 items-center justify-center">
-          <motion.span
-            className="absolute h-[2px] w-3.5 rounded-full bg-secondary"
-            animate={{ rotate: isOpen ? 45 : 0 }}
-            transition={{ duration: 0.2 }}
-          />
-          <motion.span
-            className="absolute h-[2px] w-3.5 rounded-full bg-secondary"
-            animate={{ rotate: isOpen ? -45 : 90 }}
-            transition={{ duration: 0.2 }}
-          />
-        </span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
+        <button
+          onClick={onToggle}
+          className="flex w-full items-center gap-4 px-6 py-5 text-left transition-colors"
+          aria-expanded={isOpen}
+        >
+          {/* "?" icon */}
+          <span
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-heading text-[15px] font-bold transition-all duration-300 ${
+              isOpen
+                ? 'bg-secondary text-white shadow-[0_2px_12px_rgba(13,153,132,0.3)]'
+                : 'bg-secondary/[0.08] text-secondary group-hover:bg-secondary/[0.12]'
+            }`}
           >
-            <p className="pb-5 text-[15px] leading-[1.75] text-gray-500">
-              {answer}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            ?
+          </span>
+
+          <span
+            className={`flex-1 pr-2 font-heading text-[17px] font-semibold transition-colors duration-300 ${
+              isOpen ? 'text-secondary-700' : 'text-primary-600'
+            }`}
+          >
+            {question}
+          </span>
+
+          {/* chevron */}
+          <motion.span
+            className="flex h-6 w-6 shrink-0 items-center justify-center"
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-colors duration-300 ${isOpen ? 'text-secondary' : 'text-gray-400'}`}
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </motion.span>
+        </button>
+
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="px-6 pb-6 pl-[4.5rem]">
+                <p className="text-[15px] leading-[1.8] text-gray-500">
+                  {answer}
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   )
 }
 
+/* ─── main FAQ component ─── */
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
+  /* ── simple mouse-follow "?" cursor ── */
+  const sectionRef = useRef<HTMLElement>(null)
+  const cursorRef = useRef<HTMLDivElement>(null)
+  const mouseRef = useRef({ x: 0, y: 0 })
+  const posRef = useRef({ x: 0, y: 0 })
+  const rafRef = useRef<number>(0)
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const section = sectionRef.current
+    if (!section) return
+    const rect = section.getBoundingClientRect()
+    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+  }, [])
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const mql = window.matchMedia('(pointer: fine)')
+    if (!mql.matches) return
+
+    section.addEventListener('mousemove', handleMouseMove)
+
+    const animate = () => {
+      posRef.current.x += (mouseRef.current.x - posRef.current.x) * 0.06
+      posRef.current.y += (mouseRef.current.y - posRef.current.y) * 0.06
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${posRef.current.x - 20}px, ${posRef.current.y - 20}px)`
+      }
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      section.removeEventListener('mousemove', handleMouseMove)
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [handleMouseMove])
+
   return (
-    <section id="faq" className="py-20 md:py-28 lg:py-32">
-      <Container>
+    <section ref={sectionRef} id="faq" className="relative overflow-hidden py-20 md:py-28 lg:py-32">
+      <style>{floatCSS}</style>
+
+      {/* ── soft radial accent ── */}
+      <div
+        className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.04] blur-[120px] pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(13,153,132,0.6) 0%, transparent 70%)' }}
+      />
+
+      {/* ── floating "?" marks ── */}
+      <div className="absolute inset-0 pointer-events-none hidden lg:block" aria-hidden="true">
+        {floatingMarks.map((m, i) => (
+          <div
+            key={`qmark-${i}`}
+            className={`absolute faq-float-${i}`}
+            style={{ left: m.x, top: m.y }}
+          >
+            <span
+              className="block font-heading font-bold text-secondary select-none"
+              style={{ fontSize: m.size, opacity: m.opacity }}
+            >
+              ?
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* ── mouse-follow "?" cursor ── */}
+      <div
+        ref={cursorRef}
+        className="absolute top-0 left-0 pointer-events-none hidden lg:flex items-center justify-center"
+        style={{ willChange: 'transform', zIndex: 2 }}
+      >
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="opacity-[0.07]">
+          <circle cx="20" cy="20" r="18" stroke="rgba(13,153,132,0.5)" strokeWidth="1" fill="none" />
+          <text
+            x="20"
+            y="26"
+            textAnchor="middle"
+            fill="rgba(13,153,132,0.6)"
+            fontSize="20"
+            fontWeight="700"
+            fontFamily="DM Sans, sans-serif"
+          >
+            ?
+          </text>
+        </svg>
+      </div>
+
+      <Container className="relative z-10">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
           {/* Left — heading + testimonial */}
           <div className="lg:w-[38%]">
@@ -125,7 +273,7 @@ export default function FAQ() {
           </div>
 
           {/* Right — accordion */}
-          <div className="lg:w-[62%]">
+          <div className="flex flex-col gap-3 lg:w-[62%]">
             {faq.items.map((item, i) => (
               <AccordionItem
                 key={item.question}
@@ -136,7 +284,6 @@ export default function FAQ() {
                 index={i}
               />
             ))}
-            <div className="border-t border-gray-200" />
           </div>
         </div>
       </Container>

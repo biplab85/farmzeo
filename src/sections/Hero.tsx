@@ -235,7 +235,7 @@ export default function Hero() {
       {/* Premium cursor follower — hero only */}
       <HeroCursorFollower sectionRef={sectionRef} />
 
-      <div className="relative z-10 pt-32 pb-0 lg:pt-40 lg:pb-0">
+      <div className="relative z-10 pt-32 pb-20 lg:pt-40 lg:pb-32">
         <Container>
           <div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-16">
             {/* Left */}
