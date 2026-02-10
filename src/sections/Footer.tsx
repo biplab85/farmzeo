@@ -162,6 +162,19 @@ export default function Footer() {
             </div>
           </div>
         </Container>
+
+        {/* Large Background Text */}
+        <div className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none">
+          <div
+            className="font-heading text-[20vw] font-bold whitespace-nowrap leading-none -mb-[5vw] text-center"
+            style={{
+              WebkitTextStroke: '1.5px rgba(255,255,255,0.06)',
+              color: 'transparent',
+            }}
+          >
+            FARMZEO
+          </div>
+        </div>
       </footer>
 
       <BackToTop />
