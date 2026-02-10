@@ -378,7 +378,7 @@ function StatCard({
         </div>
       </div>
 
-      <div className="mt-5 font-heading text-[36px] font-extrabold text-white sm:text-[40px] md:text-[48px]"
+      <div className="mt-5 font-heading text-[28px] font-extrabold text-white sm:text-[36px] md:text-[48px]"
         style={{ textShadow: '0 0 24px rgba(16,185,129,0.2)' }}>
         {display}
       </div>
@@ -425,7 +425,7 @@ export default function Opportunity() {
             </ScrollReveal>
 
             <SplitText as="h2"
-              className="mx-auto mt-5 max-w-3xl font-heading text-[30px] font-bold leading-[1.15] text-white md:text-[38px] lg:text-[44px] lg:tracking-[-0.5px]">
+              className="mx-auto mt-5 max-w-3xl font-heading text-[24px] font-bold leading-[1.15] text-white sm:text-[30px] md:text-[38px] lg:text-[44px] lg:tracking-[-0.5px]">
               {opportunity.headline}
             </SplitText>
 

@@ -177,7 +177,7 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
       transition={{ delay: index * 0.08, duration: 0.6, ease: EASE }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-8 md:p-10"
+      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-6 md:p-8 lg:p-10"
     >
       {/* Cursor-tracking glow */}
       <div
@@ -189,7 +189,7 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
       />
 
       {/* Ghost number */}
-      <span className="absolute right-4 top-2 select-none font-heading text-[64px] font-extrabold leading-none text-white/[0.04]">
+      <span className="absolute right-4 top-2 select-none font-heading text-[36px] font-extrabold leading-none text-white/[0.04] sm:text-[48px] md:text-[64px]">
         {ghostNumbers[index]}
       </span>
 
@@ -197,7 +197,7 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
       <div className="pointer-events-none absolute inset-0 rounded-2xl border border-transparent transition-colors duration-500 group-hover:border-secondary/20" />
 
       <div className="relative">
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/[0.08] text-secondary-400 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/[0.12]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.08] text-secondary-400 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/[0.12] md:h-14 md:w-14">
           {Icon && <Icon size={28} />}
         </div>
         <h3 className="mt-6 font-heading text-[18px] font-semibold text-white">
@@ -281,7 +281,7 @@ export default function Benefits() {
 
             <SplitText
               as="h2"
-              className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]"
+              className="mx-auto mt-5 max-w-3xl font-heading text-[26px] font-bold leading-[1.15] text-white sm:text-[32px] md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]"
             >
               {benefits.headline}
             </SplitText>

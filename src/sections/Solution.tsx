@@ -646,7 +646,7 @@ export default function Solution() {
 
             <SplitText
               as="h2"
-              className="mx-auto mt-5 max-w-4xl font-heading text-[32px] font-bold leading-[1.12] tracking-[-0.5px] text-white sm:text-[36px] md:text-[42px] lg:text-[52px]"
+              className="mx-auto mt-5 max-w-4xl font-heading text-[26px] font-bold leading-[1.12] tracking-[-0.5px] text-white sm:text-[32px] md:text-[42px] lg:text-[52px]"
             >
               {solution.headline}
             </SplitText>

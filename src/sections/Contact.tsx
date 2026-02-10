@@ -249,7 +249,7 @@ export default function Contact() {
               <div className="h-[2px] w-8 bg-secondary" />
             </div>
           </ScrollReveal>
-          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[26px] font-bold text-primary-600 sm:text-[32px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
             {contact.headline}
           </SplitText>
           <ScrollReveal delay={0.3}>
@@ -262,7 +262,7 @@ export default function Contact() {
         {/* Globe + contact info + form */}
         <div className="mx-auto mt-14 max-w-5xl lg:mt-16">
 
-          <div className="flex flex-col gap-10 lg:flex-row lg:gap-12">
+          <div className="flex flex-col gap-6 sm:gap-10 lg:flex-row lg:gap-12">
             {/* Left — contact options */}
             <ScrollReveal direction="left" className="lg:w-[38%]">
               <div className="flex flex-col gap-4">

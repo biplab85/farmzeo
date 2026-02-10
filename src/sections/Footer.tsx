@@ -81,7 +81,7 @@ export default function Footer() {
 
         <Container className="relative z-10">
           {/* Top section */}
-          <div className="grid gap-8 md:gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          <div className="grid gap-6 sm:gap-8 md:gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
             {/* Brand column */}
             <div>
               <a href="#" className="group inline-block">

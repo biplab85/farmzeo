@@ -16,15 +16,18 @@ export default function Navbar() {
       const progress = Math.min(window.scrollY / 80, 1)
       setScrollProgress(progress)
 
-      // Detect active section
+      // Detect active section (iterate bottom-up so deepest visible section wins)
       const sections = ['problem', 'solution', 'product-tour', 'features', 'about', 'faq']
-      for (const id of sections.reverse()) {
+      let found = ''
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const id = sections[i]!
         const el = document.getElementById(id)
         if (el && window.scrollY >= el.offsetTop - 200) {
-          setActiveSection(id)
+          found = id
           break
         }
       }
+      setActiveSection(found)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -154,7 +157,7 @@ export default function Navbar() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-2xl font-bold text-white hover:text-secondary-400 sm:text-3xl"
+                  className="text-xl font-bold text-white hover:text-secondary-400 sm:text-2xl"
                 >
                   {link.label}
                 </motion.a>

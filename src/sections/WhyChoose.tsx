@@ -310,7 +310,7 @@ export default function WhyChoose() {
 
       {/* ── content ── */}
       <Container className="relative z-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
+        <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:items-center lg:gap-16">
           {/* Left — content */}
           <div className="lg:w-1/2">
             <ScrollReveal>
@@ -319,7 +319,7 @@ export default function WhyChoose() {
                 <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">{whyChoose.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[26px] font-bold text-white sm:text-[32px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {whyChoose.headline}
             </SplitText>
 
@@ -378,7 +378,7 @@ export default function WhyChoose() {
             >
               {/* Image placeholder with gradient */}
               <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-white/[0.01] shadow-2xl backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-5 p-6 text-center sm:p-8 md:p-10 lg:p-16">
+                <div className="flex flex-col items-center gap-5 p-5 text-center sm:p-8 md:p-10 lg:p-16">
                   {/* Animated farming illustration */}
                   <motion.svg
                     width="120"

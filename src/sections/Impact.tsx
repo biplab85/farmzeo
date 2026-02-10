@@ -386,7 +386,7 @@ export default function Impact() {
               <div className="h-[2px] w-8 bg-white/40" />
             </div>
           </ScrollReveal>
-          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[26px] font-bold text-white sm:text-[32px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
             {impact.headline}
           </SplitText>
         </div>

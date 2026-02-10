@@ -112,7 +112,7 @@ function AccordionItem({
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-5 pl-12 sm:px-6 sm:pb-6 sm:pl-[4.5rem]">
+              <div className="px-4 pb-5 pl-10 sm:px-6 sm:pb-6 sm:pl-[4.5rem]">
                 <p className="text-[15px] leading-[1.8] text-white/50">
                   {answer}
                 </p>
@@ -220,7 +220,7 @@ export default function FAQ() {
       </div>
 
       <Container className="relative z-10">
-        <div className="flex flex-col gap-8 lg:flex-row lg:gap-16">
+        <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:gap-16">
           {/* Left — heading + testimonial */}
           <div className="lg:w-[38%]">
             <ScrollReveal>
@@ -229,7 +229,7 @@ export default function FAQ() {
                 <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">{faq.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[26px] font-bold text-white sm:text-[32px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {faq.headline}
             </SplitText>
             <ScrollReveal delay={0.3}>

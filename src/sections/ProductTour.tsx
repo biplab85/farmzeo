@@ -98,7 +98,7 @@ export default function ProductTour() {
                 <div className="h-[2px] w-8 bg-secondary-400" />
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[26px] font-bold text-white sm:text-[32px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {productTour.headline}
             </SplitText>
           </div>
@@ -110,7 +110,7 @@ export default function ProductTour() {
                 <button
                   key={mod.tab}
                   onClick={() => handleTabClick(i)}
-                  className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-[13px] font-medium transition-all duration-300 ${
+                  className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-medium transition-all duration-300 sm:px-4 sm:py-2.5 sm:text-[13px] ${
                     activeTab === i
                       ? 'text-white'
                       : 'text-white/40 hover:text-white/60'
@@ -131,7 +131,7 @@ export default function ProductTour() {
           </ScrollReveal>
 
           {/* Content area */}
-          <div className="mx-auto mt-10 max-w-5xl lg:mt-12">
+          <div className="mx-auto mt-6 max-w-5xl sm:mt-10 lg:mt-12">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -139,7 +139,7 @@ export default function ProductTour() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12"
+                className="flex flex-col gap-5 sm:gap-8 lg:flex-row lg:items-center lg:gap-12"
               >
                 {/* Text */}
                 <div className="lg:w-[42%]">
