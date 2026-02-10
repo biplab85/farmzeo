@@ -248,7 +248,7 @@ export default function Hero() {
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="h-[2px] w-8 origin-left bg-secondary-400"
                 />
-                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">
+                <span className="text-[13px] font-bold uppercase tracking-[2px] text-secondary-400 sm:tracking-[3px]">
                   {hero.label}
                 </span>
               </motion.div>
@@ -287,7 +287,7 @@ export default function Hero() {
                 </a>
                 <a
                   href={hero.secondaryCta.href}
-                  className="group flex items-center gap-2.5 rounded-full border border-white/20 px-7 py-3.5 text-[15px] font-medium text-white transition-all duration-300 hover:border-white/40 hover:bg-white/5"
+                  className="group flex items-center gap-2.5 rounded-full border border-white/20 px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:border-white/40 hover:bg-white/5 sm:px-7 sm:py-3.5 sm:text-[15px]"
                 >
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
                     <svg width="10" height="12" viewBox="0 0 10 12" fill="white"><path d="M0 0l10 6-10 6z" /></svg>

@@ -462,7 +462,7 @@ export default function WhyChoose() {
 
               {/* Floating stat card — top right */}
               <motion.div
-                className="absolute -right-2 -top-3 rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md lg:-right-6"
+                className="absolute -top-3 right-1 hidden rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md sm:block sm:-right-2 lg:-right-6"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               >
@@ -477,7 +477,7 @@ export default function WhyChoose() {
 
               {/* Floating stat card — bottom left */}
               <motion.div
-                className="absolute -bottom-3 -left-2 rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md lg:-left-6"
+                className="absolute -bottom-3 left-1 hidden rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md sm:block sm:-left-2 lg:-left-6"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               >
