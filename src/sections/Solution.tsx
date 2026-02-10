@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Container from '../components/Container'
@@ -126,67 +126,245 @@ function MarketplaceScene() {
 
 const mockupScenes = [FieldsScene, FinanceScene, WeatherScene, MarketplaceScene]
 
-// ─── Clean Background ───────────────────────────────────────
+// ─── Premium Background — Topographic Flow ─────────────────
 
-function CleanBackground({ inView }: { inView: boolean }) {
+const TOPO_PATHS = [
+  { d: 'M-40 140 Q200 100 440 135 T880 110 T1320 140 T1520 120', opacity: 0.08, w: 1.2 },
+  { d: 'M-40 260 Q240 220 480 255 T920 230 T1360 260 T1520 240', opacity: 0.06, w: 1 },
+  { d: 'M-40 380 Q180 340 420 375 T860 350 T1300 380 T1520 360', opacity: 0.07, w: 1.2 },
+  { d: 'M-40 500 Q260 460 500 495 T940 470 T1380 500 T1520 480', opacity: 0.05, w: 0.8 },
+  { d: 'M-40 620 Q220 580 460 615 T900 590 T1340 620 T1520 600', opacity: 0.06, w: 1 },
+  { d: 'M-40 740 Q200 700 440 735 T880 710 T1320 740 T1520 720', opacity: 0.04, w: 0.8 },
+]
+
+const ACCENT_RINGS = [
+  { cx: 0.1, cy: 0.18, r1: 2, r2: 3.2, color: '#0D9984' },
+  { cx: 0.88, cy: 0.22, r1: 1.5, r2: 2.5, color: '#025080' },
+  { cx: 0.25, cy: 0.8, r1: 1.8, r2: 2.8, color: '#0D9984' },
+  { cx: 0.75, cy: 0.68, r1: 1.4, r2: 2.4, color: '#025080' },
+  { cx: 0.5, cy: 0.08, r1: 1.2, r2: 2.1, color: '#F5A623' },
+]
+
+const SOL_PARTICLES = [
+  { x: '8%', y: '12%', size: 4, opacity: 0.12, dur: '24s', dx: 20, dy: -25 },
+  { x: '90%', y: '18%', size: 3, opacity: 0.1, dur: '28s', dx: -18, dy: 22 },
+  { x: '12%', y: '80%', size: 5, opacity: 0.08, dur: '26s', dx: 15, dy: -20 },
+  { x: '85%', y: '72%', size: 3, opacity: 0.12, dur: '22s', dx: -22, dy: -18 },
+  { x: '48%', y: '6%', size: 4, opacity: 0.1, dur: '30s', dx: 12, dy: 15 },
+  { x: '35%', y: '90%', size: 3, opacity: 0.08, dur: '34s', dx: -15, dy: -12 },
+  { x: '68%', y: '45%', size: 4, opacity: 0.1, dur: '27s', dx: 18, dy: -16 },
+  { x: '5%', y: '50%', size: 3, opacity: 0.08, dur: '32s', dx: 14, dy: 20 },
+]
+
+const solBgCSS = SOL_PARTICLES.map((p, i) => `
+  .sol-dot-${i}{animation:solDot${i} ${p.dur} ease-in-out infinite}
+  @keyframes solDot${i}{
+    0%,100%{transform:translate(0,0)}
+    25%{transform:translate(${p.dx * 0.6}px,${p.dy * 0.4}px)}
+    50%{transform:translate(${p.dx}px,${p.dy}px)}
+    75%{transform:translate(${p.dx * 0.3}px,${p.dy * 0.7}px)}
+  }
+`).join('') + `
+  @keyframes solTopoDrift{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  .sol-topo-0{animation:solTopoDrift 20s ease-in-out infinite}
+  .sol-topo-1{animation:solTopoDrift 24s ease-in-out infinite;animation-delay:-4s}
+  .sol-topo-2{animation:solTopoDrift 22s ease-in-out infinite;animation-delay:-8s}
+  .sol-topo-3{animation:solTopoDrift 26s ease-in-out infinite;animation-delay:-12s}
+  .sol-topo-4{animation:solTopoDrift 21s ease-in-out infinite;animation-delay:-6s}
+  .sol-topo-5{animation:solTopoDrift 25s ease-in-out infinite;animation-delay:-10s}
+  @keyframes solRingPulse{0%,100%{opacity:1}50%{opacity:0.5}}
+  .sol-ring-a{animation:solRingPulse 8s ease-in-out infinite}
+  .sol-ring-b{animation:solRingPulse 10s ease-in-out infinite;animation-delay:-4s}
+  @keyframes solOrbA{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-18px) scale(1.04)}66%{transform:translate(-18px,12px) scale(0.96)}}
+  @keyframes solOrbB{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-20px,15px) scale(1.03)}66%{transform:translate(15px,-20px) scale(0.97)}}
+  .sol-orb-a{animation:solOrbA 22s ease-in-out infinite}
+  .sol-orb-b{animation:solOrbB 28s ease-in-out infinite}
+`
+
+function PremiumBg({ inView }: { inView: boolean }) {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      {/* Soft teal ambient glow — top left */}
-      <motion.div
-        className="absolute"
-        style={{
-          left: '-8%', top: '-5%', width: 600, height: 600,
-          background: 'radial-gradient(circle, rgba(13,153,132,0.035) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 2 }}
-      />
-      {/* Soft warm glow — bottom right (desktop) */}
-      <motion.div
-        className="absolute hidden md:block"
-        style={{
-          right: '-6%', bottom: '-8%', width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(245,166,35,0.02) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-        }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 2, delay: 0.3 }}
-      />
+    <motion.div
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 2 }}
+      aria-hidden="true"
+    >
+      <style>{solBgCSS}</style>
 
-      {/* Minimal decorative SVG */}
-      <motion.svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1440 800"
-        preserveAspectRatio="xMidYMid slice"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 1.5, delay: 0.3 }}
-      >
-        {/* Two gentle flowing curves */}
-        <path
-          d="M-40 380 Q360 320 720 370 T1480 350"
-          stroke="rgba(13,153,132,0.04)"
-          strokeWidth="1"
-          fill="none"
-        />
-        <path
-          d="M-40 520 Q400 470 800 510 T1480 490"
-          stroke="rgba(13,153,132,0.025)"
-          strokeWidth="1"
-          fill="none"
-        />
-        {/* Soft ring accents */}
-        <circle cx="180" cy="180" r="70" stroke="rgba(13,153,132,0.025)" strokeWidth="0.5" fill="none" />
-        <circle cx="1260" cy="620" r="50" stroke="rgba(13,153,132,0.02)" strokeWidth="0.5" fill="none" />
-        {/* Tiny accent dots */}
-        <circle cx="680" cy="140" r="3" fill="rgba(13,153,132,0.04)" />
-        <circle cx="1100" cy="320" r="2.5" fill="rgba(13,153,132,0.03)" />
-        <circle cx="340" cy="650" r="2" fill="rgba(13,153,132,0.035)" />
-      </motion.svg>
-    </div>
+      {/* Dot grid pattern */}
+      <svg className="absolute inset-0 h-full w-full">
+        <defs>
+          <pattern id="solDotGrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="20" cy="20" r="0.8" fill="rgba(13,153,132,0.12)" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#solDotGrid)" />
+      </svg>
+
+      {/* Topographic flow lines */}
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full">
+        {TOPO_PATHS.map((path, i) => (
+          <path
+            key={`topo-${i}`}
+            d={path.d}
+            stroke="#0D9984"
+            strokeWidth={path.w}
+            fill="none"
+            opacity={path.opacity}
+            className={`sol-topo-${i}`}
+          />
+        ))}
+      </svg>
+
+      {/* Accent ring clusters */}
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        {ACCENT_RINGS.map((ring, i) => (
+          <g key={`ring-${i}`} className={i % 2 === 0 ? 'sol-ring-a' : 'sol-ring-b'}>
+            <circle cx={ring.cx * 100} cy={ring.cy * 100} r={ring.r1} fill="none" stroke={ring.color} strokeWidth="0.06" opacity="0.08" />
+            <circle cx={ring.cx * 100} cy={ring.cy * 100} r={ring.r2} fill="none" stroke={ring.color} strokeWidth="0.04" opacity="0.05" strokeDasharray="0.5 1" />
+          </g>
+        ))}
+      </svg>
+
+      {/* Floating micro particles */}
+      <div className="absolute inset-0 hidden lg:block">
+        {SOL_PARTICLES.map((p, i) => (
+          <div key={`sol-p-${i}`} className={`absolute sol-dot-${i}`} style={{ left: p.x, top: p.y }}>
+            <div
+              style={{
+                width: p.size,
+                height: p.size,
+                borderRadius: '50%',
+                background: `rgba(13,153,132,${p.opacity})`,
+                boxShadow: `0 0 ${p.size * 3}px rgba(13,153,132,${p.opacity * 0.4})`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Grain texture */}
+      <svg className="absolute inset-0 h-full w-full opacity-[0.03]">
+        <filter id="solGrain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#solGrain)" />
+      </svg>
+    </motion.div>
+  )
+}
+
+function SolOrbs({ inView }: { inView: boolean }) {
+  return (
+    <motion.div
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 1.5 }}
+      aria-hidden="true"
+    >
+      <div
+        className="absolute sol-orb-a"
+        style={{
+          left: '-5%', top: '-8%', width: 500, height: 500,
+          background: 'radial-gradient(circle, rgba(13,153,132,0.08) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+        }}
+      />
+      <div
+        className="absolute sol-orb-b"
+        style={{
+          right: '-4%', bottom: '-6%', width: 420, height: 420,
+          background: 'radial-gradient(circle, rgba(245,166,35,0.05) 0%, transparent 70%)',
+          filter: 'blur(70px)',
+        }}
+      />
+      <div
+        className="absolute sol-orb-a"
+        style={{
+          left: '40%', top: '50%', width: 380, height: 380,
+          background: 'radial-gradient(circle, rgba(2,80,128,0.06) 0%, transparent 70%)',
+          filter: 'blur(70px)',
+          animationDelay: '-8s',
+        }}
+      />
+    </motion.div>
+  )
+}
+
+function SolCursorSVG() {
+  const wrapperRef = useRef<SVGSVGElement>(null)
+  const ringRef = useRef<SVGGElement>(null)
+  const glowRef = useRef<SVGCircleElement>(null)
+  const pos = useRef({ x: -200, y: -200 })
+  const smooth = useRef({ x: -200, y: -200 })
+  const rotation = useRef(0)
+  const inside = useRef(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return
+    const section = wrapperRef.current?.closest('section')
+    if (!section) return
+
+    const onMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect()
+      pos.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+      inside.current =
+        e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top && e.clientY <= rect.bottom
+    }
+    section.addEventListener('mousemove', onMove, { passive: true })
+
+    let raf: number
+    const animate = () => {
+      smooth.current.x += (pos.current.x - smooth.current.x) * 0.1
+      smooth.current.y += (pos.current.y - smooth.current.y) * 0.1
+      rotation.current += 0.5
+
+      if (wrapperRef.current) {
+        wrapperRef.current.style.opacity = inside.current ? '1' : '0'
+      }
+      if (ringRef.current) {
+        ringRef.current.setAttribute('transform', `translate(${smooth.current.x}, ${smooth.current.y}) rotate(${rotation.current})`)
+      }
+      if (glowRef.current) {
+        glowRef.current.setAttribute('cx', String(smooth.current.x))
+        glowRef.current.setAttribute('cy', String(smooth.current.y))
+      }
+      raf = requestAnimationFrame(animate)
+    }
+    raf = requestAnimationFrame(animate)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      section.removeEventListener('mousemove', onMove)
+    }
+  }, [])
+
+  return (
+    <svg
+      ref={wrapperRef}
+      className="pointer-events-none absolute inset-0 z-[5] hidden h-full w-full lg:block"
+      style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id="solCursorGlow">
+          <stop offset="0%" stopColor="#0D9984" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#0D9984" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#0D9984" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {/* Glow */}
+      <circle ref={glowRef} cx={-200} cy={-200} r="70" fill="url(#solCursorGlow)" />
+      {/* Rotating rings */}
+      <g ref={ringRef}>
+        <circle r="22" fill="none" stroke="rgba(13,153,132,0.35)" strokeWidth="1.2" strokeDasharray="5 8" />
+        <circle r="12" fill="none" stroke="rgba(13,153,132,0.15)" strokeWidth="0.8" strokeDasharray="3 6" />
+        <circle r="2.5" fill="#0D9984" opacity="0.6" />
+      </g>
+    </svg>
   )
 }
 
@@ -224,12 +402,12 @@ function FeatureCard({
       onMouseLeave={handleMouseLeave}
       className={`group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-400 active:scale-[0.98] md:active:scale-100 ${
         isActive
-          ? 'border border-secondary/15 bg-white hover:-translate-y-0.5'
-          : 'border border-transparent bg-transparent hover:border-gray-200/60 hover:bg-white/80 hover:shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+          ? 'border border-secondary/20 bg-white/[0.07] backdrop-blur-[12px] hover:-translate-y-0.5'
+          : 'border border-white/[0.06] bg-white/[0.03] hover:border-white/[0.12] hover:bg-white/[0.06]'
       }`}
       style={{
         boxShadow: isActive
-          ? 'inset 0 1px 0 rgba(13,153,132,0.08), 0 4px 24px rgba(13,153,132,0.08), 0 1px 3px rgba(0,0,0,0.04)'
+          ? 'inset 0 1px 0 rgba(13,153,132,0.12), 0 4px 24px rgba(13,153,132,0.15), 0 1px 3px rgba(0,0,0,0.2)'
           : undefined,
       }}
     >
@@ -237,7 +415,7 @@ function FeatureCard({
       <div
         className="pointer-events-none absolute inset-0 hidden transition-opacity duration-300 md:block"
         style={{
-          background: 'radial-gradient(circle 180px at var(--sol-glow-x, 50%) var(--sol-glow-y, 50%), rgba(13,153,132,0.06), transparent 60%)',
+          background: 'radial-gradient(circle 180px at var(--sol-glow-x, 50%) var(--sol-glow-y, 50%), rgba(13,153,132,0.12), transparent 60%)',
           opacity: 'var(--sol-glow-opacity, 0)',
         }}
       />
@@ -252,8 +430,8 @@ function FeatureCard({
             transition={isActive ? { type: 'spring', stiffness: 500, damping: 15 } : { duration: 0.2 }}
             className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl transition-colors duration-300 md:h-11 md:w-11 ${
               isActive
-                ? 'bg-secondary/10 text-secondary'
-                : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200/60 group-hover:text-gray-500'
+                ? 'bg-secondary/15 text-secondary-400'
+                : 'bg-white/[0.08] text-white/40 group-hover:bg-white/[0.12] group-hover:text-white/50'
             }`}
           >
             {Icon && <Icon size={20} />}
@@ -261,7 +439,7 @@ function FeatureCard({
 
           <div className="min-w-0 flex-1">
             <h3 className={`font-heading text-[16px] font-semibold transition-colors duration-300 md:text-[17px] ${
-              isActive ? 'text-primary-600' : 'text-gray-500 group-hover:text-gray-600'
+              isActive ? 'text-white' : 'text-white/50 group-hover:text-white/60'
             }`}>
               {feature.title}
             </h3>
@@ -272,7 +450,7 @@ function FeatureCard({
                   animate={{ opacity: 1, height: 'auto', filter: 'blur(0px)' }}
                   exit={{ opacity: 0, height: 0, filter: 'blur(4px)' }}
                   transition={{ duration: 0.4, ease: EASE }}
-                  className="mt-2 text-[14px] leading-[1.7] text-gray-500"
+                  className="mt-2 text-[14px] leading-[1.7] text-white/50"
                 >
                   {feature.description}
                 </motion.p>
@@ -285,7 +463,7 @@ function FeatureCard({
             animate={{ y: isActive ? -4 : 0 }}
             transition={{ type: 'spring', stiffness: 500, damping: 15 }}
             className={`absolute right-3 top-2 select-none font-heading text-[40px] font-extrabold leading-none transition-opacity duration-300 ${
-              isActive ? 'text-secondary/[0.08]' : 'text-gray-300/40'
+              isActive ? 'text-secondary/[0.12]' : 'text-white/[0.04]'
             }`}
           >
             {ghostNumbers[index]}
@@ -305,10 +483,10 @@ function MockupDisplay({ active, onTabClick }: { active: number; onTabClick: (i:
     <div
       className="overflow-hidden rounded-2xl"
       style={{
-        boxShadow: '0 20px 60px rgba(2,27,51,0.08), 0 4px 16px rgba(2,27,51,0.04), 0 0 0 1px rgba(13,153,132,0.08)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2), 0 0 0 1px rgba(13,153,132,0.15)',
       }}
     >
-      <div className="rounded-2xl bg-white p-1.5">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.04] p-1.5 backdrop-blur-sm">
         <div className="rounded-xl p-4 md:p-5" style={{ background: 'linear-gradient(145deg, #021B33 0%, #0A2A45 100%)' }}>
           {/* Browser chrome */}
           <div className="mb-3 flex items-center gap-2 md:mb-4">
@@ -426,15 +604,18 @@ export default function Solution() {
 
       <section
         ref={sectionRef}
+        id="solution"
         className="sol-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
-          background: 'linear-gradient(180deg, #F7FAFA 0%, #FFFFFF 45%, #FFFFFF 65%, #FAFBFB 100%)',
+          background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
         }}
       >
-        {/* Clean background */}
-        <CleanBackground inView={inView} />
+        {/* Premium background */}
+        <PremiumBg inView={inView} />
+        <SolOrbs inView={inView} />
+        <SolCursorSVG />
 
-        <Container className="relative">
+        <Container className="relative z-10">
           {/* Header */}
           <div className="text-center">
             <div className="inline-flex items-center gap-3">
@@ -443,14 +624,14 @@ export default function Solution() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0, duration: 0.5, ease: EASE }}
-                className="h-[2px] w-8 origin-right bg-secondary"
+                className="h-[2px] w-8 origin-right bg-secondary-400"
               />
               <motion.span
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
-                className="text-[13px] font-bold uppercase tracking-[3px] text-secondary"
+                className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400"
               >
                 {solution.label}
               </motion.span>
@@ -459,13 +640,13 @@ export default function Solution() {
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.05, duration: 0.5, ease: EASE }}
-                className="h-[2px] w-8 origin-left bg-secondary"
+                className="h-[2px] w-8 origin-left bg-secondary-400"
               />
             </div>
 
             <SplitText
               as="h2"
-              className="mx-auto mt-5 max-w-4xl font-heading text-[32px] font-bold leading-[1.12] tracking-[-0.5px] text-primary-600 sm:text-[36px] md:text-[42px] lg:text-[52px]"
+              className="mx-auto mt-5 max-w-4xl font-heading text-[32px] font-bold leading-[1.12] tracking-[-0.5px] text-white sm:text-[36px] md:text-[42px] lg:text-[52px]"
             >
               {solution.headline}
             </SplitText>
@@ -480,7 +661,7 @@ export default function Solution() {
             />
 
             <ScrollReveal delay={0.65}>
-              <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-[1.8] text-gray-500 sm:text-[17px]">
+              <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-[1.8] text-white/50 sm:text-[17px]">
                 {solution.subheadline}
               </p>
             </ScrollReveal>
@@ -497,7 +678,7 @@ export default function Solution() {
                     key={i}
                     onClick={() => setActive(i)}
                     className={`rounded-full transition-all duration-400 ${
-                      i <= active ? 'bg-secondary' : 'bg-gray-200/60'
+                      i <= active ? 'bg-secondary' : 'bg-white/[0.1]'
                     } ${i === active ? 'h-2 flex-[1.5]' : 'h-1.5 flex-1'}`}
                   />
                 ))}
@@ -505,7 +686,7 @@ export default function Solution() {
 
               {/* Desktop: vertical progress indicator */}
               <div className="hidden lg:block">
-                <div className="absolute left-[7px] top-0 h-full w-[3px] rounded-full bg-gray-200/60" />
+                <div className="absolute left-[7px] top-0 h-full w-[3px] rounded-full bg-white/[0.08]" />
                 {/* Fill with pulse wave */}
                 <motion.div
                   className="absolute left-[7px] top-0 w-[3px] overflow-hidden rounded-full"
@@ -531,7 +712,7 @@ export default function Solution() {
                 >
                   <motion.div
                     layout
-                    className="h-[14px] w-[14px] rounded-full border-[2.5px] border-white bg-secondary"
+                    className="h-[14px] w-[14px] rounded-full border-[2.5px] border-[#0A1E30] bg-secondary"
                     style={{
                       boxShadow: '0 0 0 4px rgba(13,153,132,0.15), 0 0 12px rgba(13,153,132,0.2)',
                       animation: 'solPulse 2s ease-in-out infinite',

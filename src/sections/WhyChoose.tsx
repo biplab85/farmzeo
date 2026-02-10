@@ -199,12 +199,12 @@ export default function WhyChoose() {
   }, [handleMouseMove])
 
   return (
-    <section ref={sectionRef} id="about" className="relative overflow-hidden py-20 md:py-28 lg:py-32" style={{ background: 'linear-gradient(180deg, #F7FAFA 0%, #EEF5F4 50%, #F7FAFA 100%)' }}>
+    <section ref={sectionRef} id="about" className="relative overflow-hidden py-20 md:py-28 lg:py-32" style={{ background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)' }}>
       <style>{animCSS}</style>
 
       {/* ── subtle grid overlay ── */}
       <div
-        className="absolute inset-0 opacity-[0.025]"
+        className="absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage:
             'linear-gradient(rgba(13,153,132,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(13,153,132,0.3) 1px, transparent 1px)',
@@ -214,11 +214,11 @@ export default function WhyChoose() {
 
       {/* ── ambient orbs ── */}
       <div
-        className="absolute -top-40 -right-20 w-[600px] h-[600px] rounded-full opacity-[0.04] blur-[130px] wc-orb-a pointer-events-none"
+        className="absolute -top-40 -right-20 w-[600px] h-[600px] rounded-full opacity-[0.08] blur-[130px] wc-orb-a pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(13,153,132,0.5) 0%, transparent 70%)' }}
       />
       <div
-        className="absolute -bottom-32 -left-24 w-[500px] h-[500px] rounded-full opacity-[0.03] blur-[110px] wc-orb-b pointer-events-none"
+        className="absolute -bottom-32 -left-24 w-[500px] h-[500px] rounded-full opacity-[0.06] blur-[110px] wc-orb-b pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(2,80,128,0.4) 0%, transparent 70%)' }}
       />
 
@@ -283,7 +283,7 @@ export default function WhyChoose() {
       {/* ── mouse-follow glow ── */}
       <div
         ref={glowRef}
-        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.04] pointer-events-none hidden lg:block"
+        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.08] pointer-events-none hidden lg:block"
         style={{
           background: 'radial-gradient(circle, rgba(13,153,132,0.5) 0%, rgba(2,80,128,0.15) 50%, transparent 70%)',
           filter: 'blur(50px)',
@@ -315,11 +315,11 @@ export default function WhyChoose() {
           <div className="lg:w-1/2">
             <ScrollReveal>
               <div className="inline-flex items-center gap-3">
-                <div className="h-[2px] w-8 bg-secondary" />
-                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary">{whyChoose.label}</span>
+                <div className="h-[2px] w-8 bg-secondary-400" />
+                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">{whyChoose.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {whyChoose.headline}
             </SplitText>
 
@@ -332,16 +332,16 @@ export default function WhyChoose() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="group flex gap-4 rounded-xl bg-white p-4 shadow-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:shadow-md"
+                  className="group flex gap-4 rounded-xl border border-white/[0.06] bg-white/[0.04] p-4 backdrop-blur-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:bg-white/[0.07] hover:border-white/[0.12]"
                 >
                   <div className="mt-0.5">
                     <AnimatedCheck delay={0.2 + i * 0.1} />
                   </div>
                   <div>
-                    <h4 className="font-heading text-[16px] font-semibold text-primary-600">
+                    <h4 className="font-heading text-[16px] font-semibold text-white">
                       {reason.title}
                     </h4>
-                    <p className="mt-1 text-[14px] leading-[1.7] text-gray-500">
+                    <p className="mt-1 text-[14px] leading-[1.7] text-white/50">
                       {reason.description}
                     </p>
                   </div>
@@ -351,14 +351,14 @@ export default function WhyChoose() {
 
             {/* Vision callout */}
             <ScrollReveal delay={0.3} className="mt-8">
-              <div className="rounded-xl border-l-4 border-secondary bg-secondary-50 p-5 sm:p-6">
-                <h4 className="font-heading text-[15px] font-semibold text-secondary-600">
+              <div className="rounded-xl border-l-4 border-secondary bg-white/[0.04] p-5 backdrop-blur-sm sm:p-6">
+                <h4 className="font-heading text-[15px] font-semibold text-secondary-400">
                   {whyChoose.vision.headline}
                 </h4>
                 <ul className="mt-3 space-y-2">
                   {whyChoose.vision.pillars.map((pillar) => (
-                    <li key={pillar} className="flex items-start gap-2 text-[14px] leading-[1.6] text-gray-500">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />
+                    <li key={pillar} className="flex items-start gap-2 text-[14px] leading-[1.6] text-white/50">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary-400" />
                       {pillar}
                     </li>
                   ))}
@@ -377,7 +377,7 @@ export default function WhyChoose() {
               className="relative"
             >
               {/* Image placeholder with gradient */}
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary/20 via-primary/10 to-accent/10 shadow-xl">
+              <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-white/[0.01] shadow-2xl backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-5 p-6 text-center sm:p-8 md:p-10 lg:p-16">
                   {/* Animated farming illustration */}
                   <motion.svg
@@ -434,10 +434,10 @@ export default function WhyChoose() {
                     ))}
                   </motion.svg>
 
-                  <h3 className="font-heading text-xl font-bold text-primary-600">
+                  <h3 className="font-heading text-xl font-bold text-white">
                     Empowering Farmers
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-white/50">
                     Technology meets tradition
                   </p>
 
@@ -450,10 +450,10 @@ export default function WhyChoose() {
                     ].map((stat) => (
                       <div
                         key={stat.label}
-                        className="rounded-xl bg-white/70 p-3 text-center backdrop-blur-sm shadow-sm"
+                        className="rounded-xl border border-white/[0.08] bg-white/[0.06] p-3 text-center backdrop-blur-sm"
                       >
-                        <div className="text-lg font-bold text-secondary">{stat.num}</div>
-                        <div className="text-xs text-gray-500">{stat.label}</div>
+                        <div className="text-lg font-bold text-secondary-400">{stat.num}</div>
+                        <div className="text-xs text-white/40">{stat.label}</div>
                       </div>
                     ))}
                   </div>
@@ -462,30 +462,30 @@ export default function WhyChoose() {
 
               {/* Floating stat card — top right */}
               <motion.div
-                className="absolute -right-2 -top-3 rounded-xl border border-gray-200/50 bg-white/90 px-4 py-3 shadow-lg backdrop-blur-sm lg:-right-6"
+                className="absolute -right-2 -top-3 rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md lg:-right-6"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-lg">🌾</span>
                   <div>
-                    <div className="text-sm font-bold text-primary-600">500+</div>
-                    <div className="text-[10px] text-gray-400">Active Farmers</div>
+                    <div className="text-sm font-bold text-white">500+</div>
+                    <div className="text-[10px] text-white/40">Active Farmers</div>
                   </div>
                 </div>
               </motion.div>
 
               {/* Floating stat card — bottom left */}
               <motion.div
-                className="absolute -bottom-3 -left-2 rounded-xl border border-gray-200/50 bg-white/90 px-4 py-3 shadow-lg backdrop-blur-sm lg:-left-6"
+                className="absolute -bottom-3 -left-2 rounded-xl border border-white/[0.1] bg-white/[0.06] px-4 py-3 shadow-lg backdrop-blur-md lg:-left-6"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-lg">⭐</span>
                   <div>
-                    <div className="text-sm font-bold text-primary-600">4.9</div>
-                    <div className="text-[10px] text-gray-400">User Rating</div>
+                    <div className="text-sm font-bold text-white">4.9</div>
+                    <div className="text-[10px] text-white/40">User Rating</div>
                   </div>
                 </div>
               </motion.div>

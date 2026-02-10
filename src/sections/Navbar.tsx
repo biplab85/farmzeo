@@ -17,7 +17,7 @@ export default function Navbar() {
       setScrollProgress(progress)
 
       // Detect active section
-      const sections = ['features', 'product-tour', 'pricing', 'about']
+      const sections = ['problem', 'solution', 'product-tour', 'features', 'about', 'faq']
       for (const id of sections.reverse()) {
         const el = document.getElementById(id)
         if (el && window.scrollY >= el.offsetTop - 200) {

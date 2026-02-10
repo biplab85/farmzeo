@@ -7,14 +7,14 @@ import { faq } from '../content'
 
 /* ─── floating "?" particles ─── */
 const floatingMarks = [
-  { x: '6%', y: '12%', size: 28, opacity: 0.04, dur: '22s', dx: 20, dy: -25, rotate: 15 },
-  { x: '88%', y: '8%', size: 36, opacity: 0.03, dur: '28s', dx: -25, dy: 20, rotate: -20 },
-  { x: '14%', y: '78%', size: 22, opacity: 0.05, dur: '24s', dx: 15, dy: -18, rotate: 10 },
-  { x: '82%', y: '72%', size: 30, opacity: 0.035, dur: '26s', dx: -20, dy: -22, rotate: -15 },
-  { x: '50%', y: '5%', size: 20, opacity: 0.04, dur: '30s', dx: 18, dy: 15, rotate: 25 },
-  { x: '92%', y: '45%', size: 24, opacity: 0.03, dur: '32s', dx: -15, dy: 20, rotate: -12 },
-  { x: '4%', y: '45%', size: 32, opacity: 0.03, dur: '27s', dx: 22, dy: -15, rotate: 18 },
-  { x: '35%', y: '92%', size: 26, opacity: 0.04, dur: '25s', dx: -18, dy: -20, rotate: -22 },
+  { x: '6%', y: '12%', size: 28, opacity: 0.08, dur: '22s', dx: 20, dy: -25, rotate: 15 },
+  { x: '88%', y: '8%', size: 36, opacity: 0.06, dur: '28s', dx: -25, dy: 20, rotate: -20 },
+  { x: '14%', y: '78%', size: 22, opacity: 0.1, dur: '24s', dx: 15, dy: -18, rotate: 10 },
+  { x: '82%', y: '72%', size: 30, opacity: 0.07, dur: '26s', dx: -20, dy: -22, rotate: -15 },
+  { x: '50%', y: '5%', size: 20, opacity: 0.08, dur: '30s', dx: 18, dy: 15, rotate: 25 },
+  { x: '92%', y: '45%', size: 24, opacity: 0.06, dur: '32s', dx: -15, dy: 20, rotate: -12 },
+  { x: '4%', y: '45%', size: 32, opacity: 0.06, dur: '27s', dx: 22, dy: -15, rotate: 18 },
+  { x: '35%', y: '92%', size: 26, opacity: 0.08, dur: '25s', dx: -18, dy: -20, rotate: -22 },
 ]
 
 /* ─── keyframes for floating marks ─── */
@@ -53,8 +53,8 @@ function AccordionItem({
       <div
         className={`rounded-xl border transition-all duration-400 ${
           isOpen
-            ? 'border-secondary/20 bg-secondary/[0.03] shadow-[0_4px_24px_rgba(13,153,132,0.06)]'
-            : 'border-gray-200/60 bg-transparent hover:border-secondary/15 hover:bg-secondary/[0.01]'
+            ? 'border-secondary/20 bg-white/[0.06] shadow-[0_4px_24px_rgba(13,153,132,0.1)] backdrop-blur-sm'
+            : 'border-white/[0.06] bg-white/[0.03] hover:border-white/[0.12] hover:bg-white/[0.05]'
         }`}
       >
         <button
@@ -67,7 +67,7 @@ function AccordionItem({
             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-heading text-[15px] font-bold transition-all duration-300 ${
               isOpen
                 ? 'bg-secondary text-white shadow-[0_2px_12px_rgba(13,153,132,0.3)]'
-                : 'bg-secondary/[0.08] text-secondary group-hover:bg-secondary/[0.12]'
+                : 'bg-white/[0.08] text-secondary-400 group-hover:bg-white/[0.12]'
             }`}
           >
             ?
@@ -75,7 +75,7 @@ function AccordionItem({
 
           <span
             className={`flex-1 pr-2 font-heading text-[16px] font-semibold transition-colors duration-300 sm:text-[17px] ${
-              isOpen ? 'text-secondary-700' : 'text-primary-600'
+              isOpen ? 'text-secondary-400' : 'text-white'
             }`}
           >
             {question}
@@ -96,7 +96,7 @@ function AccordionItem({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={`transition-colors duration-300 ${isOpen ? 'text-secondary' : 'text-gray-400'}`}
+              className={`transition-colors duration-300 ${isOpen ? 'text-secondary-400' : 'text-white/30'}`}
             >
               <path d="M6 9l6 6 6-6" />
             </svg>
@@ -113,7 +113,7 @@ function AccordionItem({
               className="overflow-hidden"
             >
               <div className="px-4 pb-5 pl-12 sm:px-6 sm:pb-6 sm:pl-[4.5rem]">
-                <p className="text-[15px] leading-[1.8] text-gray-500">
+                <p className="text-[15px] leading-[1.8] text-white/50">
                   {answer}
                 </p>
               </div>
@@ -170,12 +170,12 @@ export default function FAQ() {
   }, [handleMouseMove])
 
   return (
-    <section ref={sectionRef} id="faq" className="relative overflow-hidden py-20 md:py-28 lg:py-32">
+    <section ref={sectionRef} id="faq" className="relative overflow-hidden py-20 md:py-28 lg:py-32" style={{ background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)' }}>
       <style>{floatCSS}</style>
 
       {/* ── soft radial accent ── */}
       <div
-        className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.04] blur-[120px] pointer-events-none"
+        className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.08] blur-[120px] pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(13,153,132,0.6) 0%, transparent 70%)' }}
       />
 
@@ -203,7 +203,7 @@ export default function FAQ() {
         className="absolute top-0 left-0 pointer-events-none hidden lg:flex items-center justify-center"
         style={{ willChange: 'transform', zIndex: 2 }}
       >
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="opacity-[0.07]">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="opacity-[0.15]">
           <circle cx="20" cy="20" r="18" stroke="rgba(13,153,132,0.5)" strokeWidth="1" fill="none" />
           <text
             x="20"
@@ -225,22 +225,22 @@ export default function FAQ() {
           <div className="lg:w-[38%]">
             <ScrollReveal>
               <div className="inline-flex items-center gap-3">
-                <div className="h-[2px] w-8 bg-secondary" />
-                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary">{faq.label}</span>
+                <div className="h-[2px] w-8 bg-secondary-400" />
+                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">{faq.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {faq.headline}
             </SplitText>
             <ScrollReveal delay={0.3}>
-              <p className="mt-4 text-[16px] leading-[1.7] text-gray-500">
+              <p className="mt-4 text-[16px] leading-[1.7] text-white/50">
                 Can&apos;t find what you&apos;re looking for? Reach out to our support team.
               </p>
             </ScrollReveal>
             <ScrollReveal delay={0.4}>
               <a
                 href="#contact"
-                className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-secondary px-6 py-3 text-[15px] font-semibold text-secondary transition-all duration-300 hover:bg-secondary hover:text-white"
+                className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-secondary/60 px-6 py-3 text-[15px] font-semibold text-secondary-400 transition-all duration-300 hover:bg-secondary hover:text-white hover:border-secondary"
               >
                 Contact Support
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -251,21 +251,21 @@ export default function FAQ() {
 
             {/* Mini testimonial */}
             <ScrollReveal delay={0.5} className="mt-10">
-              <div className="relative rounded-xl border border-gray-200/50 bg-gray-50/80 p-6 backdrop-blur-sm">
+              <div className="relative rounded-xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-sm">
                 {/* Quote mark */}
-                <svg className="absolute -top-2 left-4 text-secondary/10" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="absolute -top-2 left-4 text-secondary/20" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
                 </svg>
-                <p className="mt-4 text-[15px] italic leading-[1.7] text-gray-600">
+                <p className="mt-4 text-[15px] italic leading-[1.7] text-white/60">
                   &ldquo;Farmzeo changed how I manage my farm. Everything I need is in one place now.&rdquo;
                 </p>
                 <div className="mt-4 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/10 text-sm font-bold text-secondary">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/15 text-sm font-bold text-secondary-400">
                     RK
                   </div>
                   <div>
-                    <div className="text-[13px] font-semibold text-primary-600">Raj Kumar</div>
-                    <div className="text-[12px] text-gray-400">Farmer, Maharashtra</div>
+                    <div className="text-[13px] font-semibold text-white">Raj Kumar</div>
+                    <div className="text-[12px] text-white/40">Farmer, Maharashtra</div>
                   </div>
                 </div>
               </div>

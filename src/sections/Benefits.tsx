@@ -245,6 +245,7 @@ export default function Benefits() {
 
       <section
         ref={ref}
+        id="features"
         className="ben-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
           background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',

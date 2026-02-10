@@ -624,7 +624,7 @@ export default function Problem() {
 
       <section
         ref={ref}
-        id="features"
+        id="problem"
         className="prob-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
           background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
@@ -642,9 +642,9 @@ export default function Problem() {
           </svg>
         </div>
 
-        {/* <FloatingShapes inView={inView} />
+        <FloatingShapes inView={inView} />
         <ConstellationBg inView={inView} />
-        <AmbientOrbs inView={inView} /> */}
+        <AmbientOrbs inView={inView} />
         <CursorGlow />
 
         {/* Grain */}
