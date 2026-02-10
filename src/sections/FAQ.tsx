@@ -59,7 +59,7 @@ function AccordionItem({
       >
         <button
           onClick={onToggle}
-          className="flex w-full items-center gap-4 px-6 py-5 text-left transition-colors"
+          className="flex w-full items-center gap-4 px-4 py-4 text-left transition-colors sm:px-6 sm:py-5"
           aria-expanded={isOpen}
         >
           {/* "?" icon */}
@@ -74,7 +74,7 @@ function AccordionItem({
           </span>
 
           <span
-            className={`flex-1 pr-2 font-heading text-[17px] font-semibold transition-colors duration-300 ${
+            className={`flex-1 pr-2 font-heading text-[16px] font-semibold transition-colors duration-300 sm:text-[17px] ${
               isOpen ? 'text-secondary-700' : 'text-primary-600'
             }`}
           >
@@ -112,7 +112,7 @@ function AccordionItem({
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="overflow-hidden"
             >
-              <div className="px-6 pb-6 pl-[4.5rem]">
+              <div className="px-4 pb-5 pl-12 sm:px-6 sm:pb-6 sm:pl-[4.5rem]">
                 <p className="text-[15px] leading-[1.8] text-gray-500">
                   {answer}
                 </p>
@@ -220,7 +220,7 @@ export default function FAQ() {
       </div>
 
       <Container className="relative z-10">
-        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-16">
           {/* Left — heading + testimonial */}
           <div className="lg:w-[38%]">
             <ScrollReveal>
@@ -229,7 +229,7 @@ export default function FAQ() {
                 <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary">{faq.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {faq.headline}
             </SplitText>
             <ScrollReveal delay={0.3}>

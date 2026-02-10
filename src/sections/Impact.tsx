@@ -386,7 +386,7 @@ export default function Impact() {
               <div className="h-[2px] w-8 bg-white/40" />
             </div>
           </ScrollReveal>
-          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
             {impact.headline}
           </SplitText>
         </div>
@@ -398,14 +398,14 @@ export default function Impact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-2xl border border-white/[0.08] p-8 backdrop-blur-md lg:p-12"
+            className="rounded-2xl border border-white/[0.08] p-5 backdrop-blur-md sm:p-8 lg:p-12"
             style={{
               background:
                 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(13,153,132,0.03) 50%, rgba(255,255,255,0.02) 100%)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)',
             }}
           >
-            <div className="grid gap-10 sm:grid-cols-3 sm:gap-0">
+            <div className="grid gap-8 sm:grid-cols-3 sm:gap-0">
               {impact.metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}
@@ -431,7 +431,7 @@ export default function Impact() {
                     <StatCounter
                       value={metric.value}
                       label={metric.label}
-                      className="[&>div:first-child]:text-[48px] [&>div:first-child]:font-extrabold [&>div:first-child]:text-white lg:[&>div:first-child]:text-[64px] [&>div:nth-child(2)]:mt-2 [&>div:nth-child(2)]:text-[14px] [&>div:nth-child(2)]:font-medium [&>div:nth-child(2)]:text-white/70"
+                      className="[&>div:first-child]:text-[40px] sm:[&>div:first-child]:text-[48px] [&>div:first-child]:font-extrabold [&>div:first-child]:text-white lg:[&>div:first-child]:text-[64px] [&>div:nth-child(2)]:mt-2 [&>div:nth-child(2)]:text-[14px] [&>div:nth-child(2)]:font-medium [&>div:nth-child(2)]:text-white/70"
                     />
 
                     {/* Progress bar */}

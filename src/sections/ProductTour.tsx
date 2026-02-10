@@ -163,7 +163,7 @@ export default function ProductTour() {
                 <div className="h-[2px] w-8 bg-secondary-400" />
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {productTour.headline}
             </SplitText>
           </div>
@@ -211,10 +211,10 @@ export default function ProductTour() {
                   <div className="mb-3 text-secondary-400">
                     {tabIcons[activeTab]}
                   </div>
-                  <h3 className="font-heading text-[28px] font-bold text-white">
+                  <h3 className="font-heading text-[24px] font-bold text-white sm:text-[28px]">
                     {productTour.modules[activeTab]?.title}
                   </h3>
-                  <p className="mt-4 text-[17px] leading-[1.75] text-white/50">
+                  <p className="mt-4 text-[16px] leading-[1.75] text-white/50 sm:text-[17px]">
                     {productTour.modules[activeTab]?.description}
                   </p>
 
@@ -238,7 +238,7 @@ export default function ProductTour() {
                 {/* Mockup */}
                 <div className="lg:w-[58%]">
                   <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-1.5 shadow-2xl backdrop-blur-sm">
-                    <div className="rounded-xl bg-[#021B33]/80 p-5">
+                    <div className="rounded-xl bg-[#021B33]/80 p-3 sm:p-4 md:p-5">
                       {/* Browser chrome */}
                       <div className="mb-4 flex items-center gap-2">
                         <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]" />

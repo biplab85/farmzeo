@@ -249,11 +249,11 @@ export default function Contact() {
               <div className="h-[2px] w-8 bg-secondary" />
             </div>
           </ScrollReveal>
-          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-primary-600 md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+          <SplitText as="h2" className="mx-auto mt-4 max-w-3xl font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
             {contact.headline}
           </SplitText>
           <ScrollReveal delay={0.3}>
-            <p className="mx-auto mt-5 max-w-2xl text-[17px] leading-[1.75] text-gray-500">
+            <p className="mx-auto mt-5 max-w-2xl text-[16px] leading-[1.75] text-gray-500 sm:text-[17px]">
               {contact.subheadline}
             </p>
           </ScrollReveal>
@@ -275,7 +275,7 @@ export default function Contact() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1, duration: 0.5 }}
-                      className="group flex items-start gap-4 rounded-xl border border-gray-200/60 bg-white/80 p-5 backdrop-blur-sm shadow-sm transition-all duration-300 hover:translate-x-1 hover:shadow-md hover:border-secondary/20"
+                      className="group flex items-start gap-4 rounded-xl border border-gray-200/60 bg-white/80 p-4 backdrop-blur-sm shadow-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:shadow-md hover:border-secondary/20"
                     >
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary-50 text-secondary transition-all duration-300 group-hover:bg-secondary group-hover:text-white group-hover:shadow-[0_4px_16px_rgba(13,153,132,0.25)]">
                         {Icon && <Icon size={20} />}
@@ -314,7 +314,7 @@ export default function Contact() {
 
             {/* Right — form */}
             <ScrollReveal direction="right" className="lg:w-[62%]">
-              <div className="rounded-2xl border border-gray-200/60 bg-white/90 p-8 shadow-lg backdrop-blur-sm lg:p-10">
+              <div className="rounded-2xl border border-gray-200/60 bg-white/90 p-5 shadow-lg backdrop-blur-sm sm:p-6 md:p-8 lg:p-10">
                 <AnimatePresence mode="wait">
                   {submitted ? (
                     <motion.div
@@ -458,7 +458,7 @@ export default function Contact() {
                       {/* Submit */}
                       <button
                         type="submit"
-                        className="group relative w-full overflow-hidden rounded-xl bg-accent py-4 text-[16px] font-semibold text-dark transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow"
+                        className="group relative w-full overflow-hidden rounded-xl bg-accent py-3.5 text-[15px] font-semibold sm:py-4 sm:text-[16px] text-dark transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow"
                       >
                         <span className="relative z-10 flex items-center justify-center gap-2">
                           Send Message

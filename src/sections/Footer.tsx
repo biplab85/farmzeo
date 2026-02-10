@@ -76,12 +76,12 @@ function BackToTop() {
 export default function Footer() {
   return (
     <>
-      <footer className="relative bg-[#021B33] pb-8 pt-16 lg:pt-20">
+      <footer className="relative bg-[#021B33] pb-6 pt-12 sm:pb-8 md:pt-16 lg:pt-20">
         <TwinklingDots />
 
         <Container className="relative z-10">
           {/* Top section */}
-          <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          <div className="grid gap-8 md:gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
             {/* Brand column */}
             <div>
               <a href="#" className="group inline-block">
@@ -118,7 +118,7 @@ export default function Footer() {
                 <h4 className="text-[13px] font-semibold uppercase tracking-wider text-white/80">
                   {group.title}
                 </h4>
-                <ul className="mt-5 space-y-3">
+                <ul className="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
                   {group.links.map((link) => (
                     <li key={link.label}>
                       <a

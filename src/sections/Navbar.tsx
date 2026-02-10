@@ -154,7 +154,7 @@ export default function Navbar() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-3xl font-bold text-white hover:text-secondary-400"
+                  className="text-2xl font-bold text-white hover:text-secondary-400 sm:text-3xl"
                 >
                   {link.label}
                 </motion.a>
@@ -168,7 +168,7 @@ export default function Navbar() {
                 <a
                   href={nav.cta.href}
                   onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-lg font-semibold text-dark"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-dark sm:px-8 sm:py-3.5 sm:text-lg"
                 >
                   {nav.cta.label}
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

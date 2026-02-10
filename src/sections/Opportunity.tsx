@@ -369,7 +369,7 @@ function StatCard({
       transition={{ delay: 0.8 + index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group flex flex-col items-center rounded-3xl border border-white/[0.08] bg-white/[0.04] p-7 text-center backdrop-blur-[12px] transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:scale-[1.02] hover:border-emerald-400/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.2),0_0_0_1px_rgba(16,185,129,0.1)] md:p-10"
+      className="group flex flex-col items-center rounded-3xl border border-white/[0.08] bg-white/[0.04] p-5 text-center backdrop-blur-[12px] transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:scale-[1.02] hover:border-emerald-400/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.2),0_0_0_1px_rgba(16,185,129,0.1)] sm:p-7 md:p-10"
     >
       <div className="relative">
         <ProgressArc percent={arcPct} inView={inView} delay={1.0 + index * 0.2} hovered={hovered} />
@@ -378,7 +378,7 @@ function StatCard({
         </div>
       </div>
 
-      <div className="mt-5 font-heading text-[40px] font-extrabold text-white md:text-[48px]"
+      <div className="mt-5 font-heading text-[36px] font-extrabold text-white sm:text-[40px] md:text-[48px]"
         style={{ textShadow: '0 0 24px rgba(16,185,129,0.2)' }}>
         {display}
       </div>
@@ -406,7 +406,7 @@ export default function Opportunity() {
       <ConstellationBg inView={inView} />
       <EmeraldOrbs inView={inView} />
 
-      <div ref={ref} className="relative z-10 pb-20 pt-28 md:pb-28 md:pt-36 lg:pb-32 lg:pt-32">
+      <div ref={ref} className="relative z-10 pb-16 pt-20 md:pb-28 md:pt-28 lg:pb-32 lg:pt-32">
         <Container>
           {/* Header */}
           <div className="text-center">
@@ -446,7 +446,7 @@ export default function Opportunity() {
           {/* CTA */}
           <ScrollReveal delay={0.6} className="mt-12 text-center lg:mt-14">
             <a href={opportunity.cta.href}
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-emerald-500 px-8 py-4 text-[16px] font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-400 hover:shadow-[0_8px_30px_rgba(16,185,129,0.3)]">
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-emerald-500 px-6 py-3 text-[15px] font-semibold text-white sm:px-8 sm:py-4 sm:text-[16px] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-400 hover:shadow-[0_8px_30px_rgba(16,185,129,0.3)]">
               <span className="relative z-10">{opportunity.cta.label}</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                 className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">

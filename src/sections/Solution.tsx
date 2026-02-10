@@ -465,7 +465,7 @@ export default function Solution() {
 
             <SplitText
               as="h2"
-              className="mx-auto mt-5 max-w-4xl font-heading text-[32px] font-bold leading-[1.12] tracking-[-0.5px] text-primary-600 md:text-[42px] lg:text-[52px]"
+              className="mx-auto mt-5 max-w-4xl font-heading text-[32px] font-bold leading-[1.12] tracking-[-0.5px] text-primary-600 sm:text-[36px] md:text-[42px] lg:text-[52px]"
             >
               {solution.headline}
             </SplitText>
@@ -480,7 +480,7 @@ export default function Solution() {
             />
 
             <ScrollReveal delay={0.65}>
-              <p className="mx-auto mt-6 max-w-2xl text-[17px] leading-[1.8] text-gray-500">
+              <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-[1.8] text-gray-500 sm:text-[17px]">
                 {solution.subheadline}
               </p>
             </ScrollReveal>

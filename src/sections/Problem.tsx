@@ -443,7 +443,7 @@ function PainCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] md:p-10"
+      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-8 md:p-10"
     >
       {/* Cursor-tracking glow */}
       <div
@@ -671,7 +671,7 @@ export default function Problem() {
             </ScrollReveal>
 
             {harderIndex >= 0 ? (
-              <h2 className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
+              <h2 className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
                 {headline.substring(0, harderIndex).split(' ').map((word, i) => (
                   <motion.span key={`${word}-${i}`}
                     initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
@@ -691,7 +691,7 @@ export default function Problem() {
               </h2>
             ) : (
               <SplitText as="h2"
-                className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
+                className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white sm:text-[36px] md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
                 {headline}
               </SplitText>
             )}
@@ -704,7 +704,7 @@ export default function Problem() {
           </div>
 
           {/* Cards */}
-          <div className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-2 lg:mt-16">
+          <div className="mx-auto mt-14 grid max-w-5xl gap-4 sm:gap-6 sm:grid-cols-2 lg:mt-16">
             {problem.painPoints.map((point, i) => (
               <PainCard key={point.title} point={point} index={i} inView={inView} />
             ))}

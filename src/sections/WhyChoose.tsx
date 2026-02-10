@@ -310,7 +310,7 @@ export default function WhyChoose() {
 
       {/* ── content ── */}
       <Container className="relative z-10">
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-16">
           {/* Left — content */}
           <div className="lg:w-1/2">
             <ScrollReveal>
@@ -319,7 +319,7 @@ export default function WhyChoose() {
                 <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary">{whyChoose.label}</span>
               </div>
             </ScrollReveal>
-            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 md:text-[40px] lg:text-[48px] lg:leading-[56px]">
+            <SplitText as="h2" className="mt-4 font-heading text-[32px] font-bold text-primary-600 sm:text-[36px] md:text-[40px] lg:text-[48px] lg:leading-[56px]">
               {whyChoose.headline}
             </SplitText>
 
@@ -332,7 +332,7 @@ export default function WhyChoose() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="group flex gap-4 rounded-xl bg-white p-5 shadow-sm transition-all duration-300 hover:translate-x-1 hover:shadow-md"
+                  className="group flex gap-4 rounded-xl bg-white p-4 shadow-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:shadow-md"
                 >
                   <div className="mt-0.5">
                     <AnimatedCheck delay={0.2 + i * 0.1} />
@@ -351,7 +351,7 @@ export default function WhyChoose() {
 
             {/* Vision callout */}
             <ScrollReveal delay={0.3} className="mt-8">
-              <div className="rounded-xl border-l-4 border-secondary bg-secondary-50 p-6">
+              <div className="rounded-xl border-l-4 border-secondary bg-secondary-50 p-5 sm:p-6">
                 <h4 className="font-heading text-[15px] font-semibold text-secondary-600">
                   {whyChoose.vision.headline}
                 </h4>
@@ -378,7 +378,7 @@ export default function WhyChoose() {
             >
               {/* Image placeholder with gradient */}
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary/20 via-primary/10 to-accent/10 shadow-xl">
-                <div className="flex flex-col items-center gap-5 p-12 text-center lg:p-16">
+                <div className="flex flex-col items-center gap-5 p-6 text-center sm:p-8 md:p-10 lg:p-16">
                   {/* Animated farming illustration */}
                   <motion.svg
                     width="120"
@@ -442,7 +442,7 @@ export default function WhyChoose() {
                   </p>
 
                   {/* Stats */}
-                  <div className="mt-2 grid w-full grid-cols-3 gap-3">
+                  <div className="mt-2 grid w-full grid-cols-3 gap-2 sm:gap-3">
                     {[
                       { num: '500+', label: 'Farmers' },
                       { num: '50+', label: 'Regions' },

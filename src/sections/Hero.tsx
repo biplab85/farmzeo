@@ -235,7 +235,7 @@ export default function Hero() {
       {/* Premium cursor follower — hero only */}
       <HeroCursorFollower sectionRef={sectionRef} />
 
-      <div className="relative z-10 pt-32 pb-20 lg:pt-40 lg:pb-32">
+      <div className="relative z-10 pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-40 lg:pb-32">
         <Container>
           <div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-16">
             {/* Left */}
@@ -257,7 +257,7 @@ export default function Hero() {
               <div className="mt-6">
                 <SplitText
                   as="h1"
-                  className="font-heading text-[40px] font-extrabold leading-[1.1] text-white md:text-[52px] lg:text-[68px] lg:tracking-[-1.5px]"
+                  className="font-heading text-[36px] font-extrabold leading-[1.1] text-white sm:text-[40px] md:text-[52px] lg:text-[68px] lg:tracking-[-1.5px]"
                 >
                   Harvest Smarter, Sell Faster.
                 </SplitText>
@@ -265,7 +265,7 @@ export default function Hero() {
 
               <motion.p
                 {...fadeUp(3)}
-                className="mt-6 max-w-lg text-[17px] leading-[1.75] text-white/50 lg:text-[19px]"
+                className="mt-6 max-w-lg text-[16px] leading-[1.75] text-white/50 sm:text-[17px] lg:text-[19px]"
               >
                 {hero.subheadline}
               </motion.p>
