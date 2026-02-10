@@ -59,7 +59,12 @@ export default function FinalCTA() {
                   href={finalCta.primaryCta.href}
                   className="group relative overflow-hidden rounded-full bg-accent px-10 py-4 text-[16px] font-semibold text-dark transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow"
                 >
-                  <span className="relative z-10">{finalCta.primaryCta.label}</span>
+                  <span className="relative z-10 flex items-center gap-2">
+                    {finalCta.primaryCta.label}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
                   <div
                     className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/25 to-transparent"
                     style={{ backgroundSize: '200% 100%' }}
@@ -67,9 +72,15 @@ export default function FinalCTA() {
                 </a>
                 <a
                   href={finalCta.secondaryCta.href}
-                  className="rounded-full border border-white/20 px-10 py-4 text-[16px] font-medium text-white transition-all duration-300 hover:border-white/40 hover:bg-white/5"
+                  className="group rounded-full border border-white/20 px-10 py-4 text-[16px] font-medium text-white transition-all duration-300 hover:border-white/40 hover:bg-white/5"
                 >
-                  {finalCta.secondaryCta.label}
+                  <span className="flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-translate-y-0.5">
+                      <rect x="2" y="3" width="20" height="14" rx="2" />
+                      <path d="M8 21h8M12 17v4" />
+                    </svg>
+                    {finalCta.secondaryCta.label}
+                  </span>
                 </a>
               </div>
             </ScrollReveal>

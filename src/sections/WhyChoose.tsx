@@ -1,8 +1,65 @@
+import { useRef, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
 import ScrollReveal from '../components/ScrollReveal'
 import { whyChoose } from '../content'
+
+/* ─── floating particles ─── */
+const particles = [
+  { size: 5, x: '8%', y: '12%', color: '13,153,132', opacity: 0.15, dur: '24s', dx: 25, dy: -30 },
+  { size: 3, x: '90%', y: '18%', color: '2,80,128', opacity: 0.12, dur: '28s', dx: -20, dy: 22 },
+  { size: 4, x: '12%', y: '80%', color: '245,166,35', opacity: 0.1, dur: '26s', dx: 18, dy: -20 },
+  { size: 3, x: '85%', y: '75%', color: '13,153,132', opacity: 0.14, dur: '22s', dx: -22, dy: -25 },
+  { size: 6, x: '48%', y: '8%', color: '2,80,128', opacity: 0.08, dur: '32s', dx: 15, dy: 20 },
+  { size: 4, x: '35%', y: '88%', color: '13,153,132', opacity: 0.12, dur: '30s', dx: -18, dy: -15 },
+  { size: 3, x: '72%', y: '50%', color: '245,166,35', opacity: 0.1, dur: '34s', dx: 20, dy: 18 },
+  { size: 5, x: '5%', y: '48%', color: '2,80,128', opacity: 0.08, dur: '27s', dx: 12, dy: -22 },
+]
+
+/* ─── hex grid nodes ─── */
+const hexNodes = [
+  { cx: 0.1, cy: 0.15, r: 2.5, color: '#0D9984' },
+  { cx: 0.3, cy: 0.08, r: 2, color: '#025080' },
+  { cx: 0.5, cy: 0.12, r: 3, color: '#0D9984' },
+  { cx: 0.7, cy: 0.06, r: 2, color: '#2ABFAD' },
+  { cx: 0.9, cy: 0.14, r: 2.5, color: '#025080' },
+  { cx: 0.05, cy: 0.5, r: 2, color: '#2ABFAD' },
+  { cx: 0.2, cy: 0.45, r: 2.5, color: '#0D9984' },
+  { cx: 0.4, cy: 0.5, r: 2, color: '#F5A623' },
+  { cx: 0.6, cy: 0.48, r: 3, color: '#025080' },
+  { cx: 0.8, cy: 0.52, r: 2, color: '#0D9984' },
+  { cx: 0.95, cy: 0.46, r: 2.5, color: '#2ABFAD' },
+  { cx: 0.12, cy: 0.85, r: 2, color: '#025080' },
+  { cx: 0.32, cy: 0.9, r: 2.5, color: '#0D9984' },
+  { cx: 0.52, cy: 0.88, r: 2, color: '#2ABFAD' },
+  { cx: 0.72, cy: 0.92, r: 3, color: '#F5A623' },
+  { cx: 0.88, cy: 0.86, r: 2, color: '#0D9984' },
+]
+
+const hexEdges: [number, number][] = [
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [5, 6], [6, 7], [7, 8], [8, 9], [9, 10],
+  [11, 12], [12, 13], [13, 14], [14, 15],
+  [0, 6], [1, 7], [2, 8], [3, 9],
+  [6, 12], [7, 13], [8, 14], [9, 15],
+]
+
+/* ─── keyframes ─── */
+const animCSS = particles.map((p, i) => `
+  .wc-float-${i}{animation:wcF${i} ${p.dur} ease-in-out infinite}
+  @keyframes wcF${i}{
+    0%,100%{transform:translate(0,0)}
+    25%{transform:translate(${p.dx * 0.6}px,${p.dy * 0.4}px)}
+    50%{transform:translate(${p.dx}px,${p.dy}px)}
+    75%{transform:translate(${p.dx * 0.3}px,${p.dy * 0.7}px)}
+  }
+`).join('') + `
+  .wc-orb-a{animation:wcOrbA 26s ease-in-out infinite}
+  .wc-orb-b{animation:wcOrbB 32s ease-in-out infinite}
+  @keyframes wcOrbA{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(0.95)}}
+  @keyframes wcOrbB{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-25px,18px) scale(1.04)}66%{transform:translate(18px,-22px) scale(0.96)}}
+`
 
 function AnimatedCheck({ delay }: { delay: number }) {
   return (
@@ -40,9 +97,219 @@ function AnimatedCheck({ delay }: { delay: number }) {
 }
 
 export default function WhyChoose() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
+  const trailRef = useRef<HTMLDivElement>(null)
+  const mouseRef = useRef({ x: 0, y: 0 })
+  const posRef = useRef({ x: 0, y: 0 })
+  const trailPosRef = useRef({ x: 0, y: 0 })
+  const rafRef = useRef<number>(0)
+
+  /* constellation refs */
+  const svgRef = useRef<SVGSVGElement>(null)
+  const nodesRef = useRef<(SVGCircleElement | null)[]>([])
+  const linesRef = useRef<(SVGLineElement | null)[]>([])
+  const normalizedMouse = useRef({ x: 0.5, y: 0.5 })
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const section = sectionRef.current
+    if (!section) return
+    const rect = section.getBoundingClientRect()
+    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+    normalizedMouse.current = {
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    }
+  }, [])
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    const mql = window.matchMedia('(pointer: fine)')
+    if (!mql.matches) return
+
+    section.addEventListener('mousemove', handleMouseMove)
+
+    const animate = () => {
+      /* glow follow */
+      posRef.current.x += (mouseRef.current.x - posRef.current.x) * 0.04
+      posRef.current.y += (mouseRef.current.y - posRef.current.y) * 0.04
+      if (glowRef.current) {
+        glowRef.current.style.transform = `translate(${posRef.current.x - 300}px, ${posRef.current.y - 300}px)`
+      }
+
+      /* trail follow (slower) */
+      trailPosRef.current.x += (mouseRef.current.x - trailPosRef.current.x) * 0.02
+      trailPosRef.current.y += (mouseRef.current.y - trailPosRef.current.y) * 0.02
+      if (trailRef.current) {
+        trailRef.current.style.transform = `translate(${trailPosRef.current.x - 12}px, ${trailPosRef.current.y - 12}px)`
+      }
+
+      /* constellation nodes */
+      const svg = svgRef.current
+      if (svg) {
+        const w = svg.clientWidth
+        const h = svg.clientHeight
+        const mx = normalizedMouse.current.x
+        const my = normalizedMouse.current.y
+
+        hexNodes.forEach((node, i) => {
+          const el = nodesRef.current[i]
+          if (!el) return
+          const offsetX = (mx - 0.5) * 40 * (0.4 + (i % 3) * 0.2)
+          const offsetY = (my - 0.5) * 40 * (0.4 + (i % 3) * 0.2)
+          const cx = node.cx * w + offsetX
+          const cy = node.cy * h + offsetY
+          el.setAttribute('cx', String(cx))
+          el.setAttribute('cy', String(cy))
+
+          const dist = Math.hypot(mx - node.cx, my - node.cy)
+          const opacity = Math.max(0.06, Math.min(0.4, 0.7 - dist * 1.2))
+          el.setAttribute('opacity', String(opacity))
+        })
+
+        hexEdges.forEach((edge, i) => {
+          const line = linesRef.current[i]
+          if (!line) return
+          const a = nodesRef.current[edge[0]]
+          const b = nodesRef.current[edge[1]]
+          if (!a || !b) return
+          line.setAttribute('x1', a.getAttribute('cx') ?? '0')
+          line.setAttribute('y1', a.getAttribute('cy') ?? '0')
+          line.setAttribute('x2', b.getAttribute('cx') ?? '0')
+          line.setAttribute('y2', b.getAttribute('cy') ?? '0')
+
+          const nodeA = hexNodes[edge[0]]
+          const nodeB = hexNodes[edge[1]]
+          if (!nodeA || !nodeB) return
+          const midDist = Math.hypot(mx - (nodeA.cx + nodeB.cx) / 2, my - (nodeA.cy + nodeB.cy) / 2)
+          const lineOpacity = Math.max(0.01, Math.min(0.08, 0.15 - midDist * 0.3))
+          line.setAttribute('opacity', String(lineOpacity))
+        })
+      }
+
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
+    return () => {
+      section.removeEventListener('mousemove', handleMouseMove)
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [handleMouseMove])
+
   return (
-    <section id="about" className="bg-light py-20 md:py-28 lg:py-32">
-      <Container>
+    <section ref={sectionRef} id="about" className="relative overflow-hidden py-20 md:py-28 lg:py-32" style={{ background: 'linear-gradient(180deg, #F7FAFA 0%, #EEF5F4 50%, #F7FAFA 100%)' }}>
+      <style>{animCSS}</style>
+
+      {/* ── subtle grid overlay ── */}
+      <div
+        className="absolute inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(13,153,132,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(13,153,132,0.3) 1px, transparent 1px)',
+          backgroundSize: '70px 70px',
+        }}
+      />
+
+      {/* ── ambient orbs ── */}
+      <div
+        className="absolute -top-40 -right-20 w-[600px] h-[600px] rounded-full opacity-[0.04] blur-[130px] wc-orb-a pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(13,153,132,0.5) 0%, transparent 70%)' }}
+      />
+      <div
+        className="absolute -bottom-32 -left-24 w-[500px] h-[500px] rounded-full opacity-[0.03] blur-[110px] wc-orb-b pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(2,80,128,0.4) 0%, transparent 70%)' }}
+      />
+
+      {/* ── constellation SVG ── */}
+      <svg
+        ref={svgRef}
+        className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block"
+        aria-hidden="true"
+      >
+        <defs>
+          <radialGradient id="wcMouseGlow">
+            <stop offset="0%" stopColor="#0D9984" stopOpacity="0.08" />
+            <stop offset="60%" stopColor="#025080" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="#025080" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {hexEdges.map((_edge, i) => (
+          <line
+            key={`wc-edge-${i}`}
+            ref={(el) => { linesRef.current[i] = el }}
+            stroke="rgba(13,153,132,0.1)"
+            strokeWidth="0.5"
+            opacity="0.03"
+          />
+        ))}
+
+        {hexNodes.map((node, i) => (
+          <circle
+            key={`wc-node-${i}`}
+            ref={(el) => { nodesRef.current[i] = el }}
+            r={node.r}
+            fill={node.color}
+            opacity="0.1"
+            cx={`${node.cx * 100}%`}
+            cy={`${node.cy * 100}%`}
+          />
+        ))}
+      </svg>
+
+      {/* ── floating particles ── */}
+      <div className="absolute inset-0 pointer-events-none hidden lg:block" aria-hidden="true">
+        {particles.map((p, i) => (
+          <div
+            key={`wc-p-${i}`}
+            className={`absolute wc-float-${i}`}
+            style={{ left: p.x, top: p.y }}
+          >
+            <div
+              style={{
+                width: p.size,
+                height: p.size,
+                borderRadius: '50%',
+                background: `rgba(${p.color},${p.opacity})`,
+                boxShadow: `0 0 ${p.size * 3}px rgba(${p.color},${p.opacity * 0.5})`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* ── mouse-follow glow ── */}
+      <div
+        ref={glowRef}
+        className="absolute w-[600px] h-[600px] rounded-full opacity-[0.04] pointer-events-none hidden lg:block"
+        style={{
+          background: 'radial-gradient(circle, rgba(13,153,132,0.5) 0%, rgba(2,80,128,0.15) 50%, transparent 70%)',
+          filter: 'blur(50px)',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* ── mouse-follow dot trail ── */}
+      <div
+        ref={trailRef}
+        className="absolute top-0 left-0 pointer-events-none hidden lg:block"
+        style={{ willChange: 'transform', zIndex: 2 }}
+      >
+        <div
+          className="rounded-full"
+          style={{
+            width: 24,
+            height: 24,
+            border: '1.5px solid rgba(13,153,132,0.12)',
+            background: 'radial-gradient(circle, rgba(13,153,132,0.06) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      {/* ── content ── */}
+      <Container className="relative z-10">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
           {/* Left — content */}
           <div className="lg:w-1/2">

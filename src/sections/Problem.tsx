@@ -1,13 +1,13 @@
-import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
 import ScrollReveal from '../components/ScrollReveal'
 import { problem } from '../content'
 
 /* ───────────────────────────────────────────────────
-   Animated SVG Icons — 72x72 (UNCHANGED)
+   Animated SVG Icons — 72×72
    ─────────────────────────────────────────────────── */
 
 function ScatteredIcon({ animate, hovered }: { animate: boolean; hovered: boolean }) {
@@ -139,161 +139,165 @@ function WeatherIcon({ animate, hovered }: { animate: boolean; hovered: boolean 
 const iconComponents = [ScatteredIcon, MoneyIcon, BlindIcon, WeatherIcon]
 
 /* ───────────────────────────────────────────────────
-   Severity Tags
+   Constants & Data
    ─────────────────────────────────────────────────── */
+const EASE = [0.16, 1, 0.3, 1] as const
+const ghostNumbers = ['01', '02', '03', '04']
+
 const severityTags = [
-  { label: 'High Impact', colors: 'bg-red-50 text-red-500 border-red-200' },
-  { label: 'Revenue Loss', colors: 'bg-amber-50 text-amber-600 border-amber-200' },
-  { label: 'Blind Spot', colors: 'bg-orange-50 text-orange-500 border-orange-200' },
-  { label: 'Unpredictable', colors: 'bg-blue-50 text-blue-500 border-blue-200' },
+  { label: 'High Impact', colors: 'bg-red-500/10 text-red-400 border-red-500/20' },
+  { label: 'Revenue Loss', colors: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+  { label: 'Blind Spot', colors: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
+  { label: 'Unpredictable', colors: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+]
+
+// Constellation nodes (normalized 0–1 coordinates)
+const CONSTELLATION_NODES = [
+  { bx: 0.08, by: 0.15, drift: 0.7 },
+  { bx: 0.22, by: 0.08, drift: 0.9 },
+  { bx: 0.38, by: 0.12, drift: 0.5 },
+  { bx: 0.52, by: 0.06, drift: 0.8 },
+  { bx: 0.68, by: 0.10, drift: 0.6 },
+  { bx: 0.82, by: 0.18, drift: 0.7 },
+  { bx: 0.92, by: 0.08, drift: 0.9 },
+  { bx: 0.15, by: 0.45, drift: 0.6 },
+  { bx: 0.30, by: 0.38, drift: 0.8 },
+  { bx: 0.48, by: 0.42, drift: 0.5 },
+  { bx: 0.65, by: 0.35, drift: 0.7 },
+  { bx: 0.80, by: 0.48, drift: 0.6 },
+  { bx: 0.10, by: 0.75, drift: 0.8 },
+  { bx: 0.28, by: 0.70, drift: 0.5 },
+  { bx: 0.50, by: 0.78, drift: 0.9 },
+  { bx: 0.72, by: 0.72, drift: 0.6 },
+  { bx: 0.88, by: 0.80, drift: 0.7 },
+  { bx: 0.42, by: 0.55, drift: 0.8 },
+  { bx: 0.95, by: 0.55, drift: 0.5 },
+]
+
+const CONSTELLATION_EDGES: [number, number][] = [
+  [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
+  [0, 7], [1, 8], [2, 9], [3, 10], [4, 10], [5, 11], [6, 11],
+  [7, 8], [8, 9], [9, 10], [10, 11],
+  [7, 12], [8, 13], [9, 17], [10, 15], [11, 16], [11, 18],
+  [12, 13], [13, 14], [14, 15], [15, 16],
+  [17, 14], [17, 9], [17, 13],
 ]
 
 /* ───────────────────────────────────────────────────
-   Animated SVG Background V3
-   Morphing blobs + flowing curves + mixed particles
+   Constellation Background with Mouse-Reactive Nodes
    ─────────────────────────────────────────────────── */
-function AnimatedSVGBackground({ inView }: { inView: boolean }) {
-  const [isMobile, setIsMobile] = useState(false)
-  const [prefersReduced, setPrefersReduced] = useState(false)
+function ConstellationBg({ inView }: { inView: boolean }) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const mouseRef = useRef({ x: 0.5, y: 0.5 })
+  const nodesRef = useRef<(SVGCircleElement | null)[]>([])
+  const edgesRef = useRef<(SVGLineElement | null)[]>([])
+  const rafRef = useRef(0)
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768)
-    setPrefersReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  }, [])
+    if (!inView || typeof window === 'undefined') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!window.matchMedia('(pointer: fine)').matches) return
 
-  const canAnimate = !prefersReduced && inView
-  const particleCount = isMobile ? 5 : 10
-  const particles = useMemo(() =>
-    Array.from({ length: particleCount }, (_, i) => ({
-      cx: 80 + (i * 1300) / particleCount + (i % 3) * 40,
-      cy: 80 + (i * 750) / particleCount + (i % 2) * 100,
-      r: 2 + (i % 3) * 0.8,
-      isDiamond: i % 3 === 0,
-      opacity: 0.08 + (i % 4) * 0.02,
-      duration: 10 + (i % 5) * 1.5,
-      driftY: 60 + (i % 3) * 25,
-      swayX: 8 + (i % 3) * 5,
-      delay: (i % 7) * 1.2,
-      rotation: i % 3 === 0 ? 360 : 0,
-    })),
-    [particleCount]
-  )
+    const svg = svgRef.current
+    if (!svg) return
+
+    const section = svg.closest('section')
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = svg.getBoundingClientRect()
+      mouseRef.current.x = (e.clientX - rect.left) / rect.width
+      mouseRef.current.y = (e.clientY - rect.top) / rect.height
+    }
+    section?.addEventListener('mousemove', handleMouseMove)
+
+    const animate = () => {
+      const mx = mouseRef.current.x
+      const my = mouseRef.current.y
+
+      CONSTELLATION_NODES.forEach((node, i) => {
+        const circle = nodesRef.current[i]
+        if (!circle) return
+        const dx = mx - node.bx
+        const dy = my - node.by
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const offsetX = dx * node.drift * 60
+        const offsetY = dy * node.drift * 60
+        const brightness = Math.max(0.15, Math.min(0.7, 1 - dist * 1.5))
+
+        circle.setAttribute('cx', String(node.bx * 100 + offsetX * 0.1))
+        circle.setAttribute('cy', String(node.by * 100 + offsetY * 0.1))
+        circle.setAttribute('opacity', String(brightness))
+        circle.setAttribute('r', String(0.3 + brightness * 0.3))
+      })
+
+      CONSTELLATION_EDGES.forEach((edge, i) => {
+        const line = edgesRef.current[i]
+        if (!line) return
+        const a = CONSTELLATION_NODES[edge[0]]
+        const b = CONSTELLATION_NODES[edge[1]]
+        if (!a || !b) return
+
+        const dxA = mx - a.bx, dyA = my - a.by
+        const dxB = mx - b.bx, dyB = my - b.by
+        const ax = a.bx * 100 + dxA * a.drift * 6
+        const ay = a.by * 100 + dyA * a.drift * 6
+        const bx = b.bx * 100 + dxB * b.drift * 6
+        const by = b.by * 100 + dyB * b.drift * 6
+
+        const midX = (a.bx + b.bx) / 2
+        const midY = (a.by + b.by) / 2
+        const midDist = Math.sqrt((mx - midX) ** 2 + (my - midY) ** 2)
+        const lineOpacity = Math.max(0.02, Math.min(0.15, 0.3 - midDist * 0.5))
+
+        line.setAttribute('x1', String(ax))
+        line.setAttribute('y1', String(ay))
+        line.setAttribute('x2', String(bx))
+        line.setAttribute('y2', String(by))
+        line.setAttribute('opacity', String(lineOpacity))
+      })
+
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      section?.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [inView])
 
   return (
     <motion.div
-      className="pointer-events-none absolute inset-0"
+      className="pointer-events-none absolute inset-0 hidden lg:block"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
       transition={{ duration: 2 }}
     >
-      <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full" aria-hidden="true">
-
-        {/* Morphing blob A — top-right */}
-        <motion.path
-          fill="rgba(13,153,132,0.03)"
-          initial={{ d: 'M900,120 C1020,80 1160,140 1200,260 S1140,420 1020,400 S840,340 820,240 S780,160 900,120 Z' }}
-          animate={canAnimate ? {
-            d: [
-              'M900,120 C1020,80 1160,140 1200,260 S1140,420 1020,400 S840,340 820,240 S780,160 900,120 Z',
-              'M920,100 C1060,120 1180,180 1180,280 S1100,440 980,380 S820,360 840,260 S800,140 920,100 Z',
-              'M880,130 C1000,60 1200,120 1220,250 S1160,400 1040,420 S860,320 830,230 S760,180 880,130 Z',
-              'M900,120 C1020,80 1160,140 1200,260 S1140,420 1020,400 S840,340 820,240 S780,160 900,120 Z',
-            ],
-          } : {}}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Morphing blob B — bottom-left */}
-        <motion.path
-          fill="rgba(13,153,132,0.02)"
-          initial={{ d: 'M200,500 C320,460 440,520 460,620 S380,760 260,740 S120,680 140,580 S80,540 200,500 Z' }}
-          animate={canAnimate ? {
-            d: [
-              'M200,500 C320,460 440,520 460,620 S380,760 260,740 S120,680 140,580 S80,540 200,500 Z',
-              'M220,480 C360,500 460,540 440,640 S340,780 240,720 S100,700 160,600 S100,520 220,480 Z',
-              'M180,510 C300,440 480,500 480,610 S400,740 280,760 S140,660 120,570 S60,560 180,510 Z',
-              'M200,500 C320,460 440,520 460,620 S380,760 260,740 S120,680 140,580 S80,540 200,500 Z',
-            ],
-          } : {}}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Flowing curve lines */}
-        <motion.path
-          d="M-100,250 C200,200 450,320 720,240 S1100,300 1540,220"
-          fill="none" stroke="rgba(13,153,132,0.04)" strokeWidth="1.5"
-          strokeDasharray="12 24"
-          initial={{ strokeDashoffset: 0 }}
-          animate={canAnimate ? { strokeDashoffset: -72 } : {}}
-          transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-        />
-        <motion.path
-          d="M-50,480 C280,520 520,440 780,500 S1080,460 1540,510"
-          fill="none" stroke="rgba(13,153,132,0.04)" strokeWidth="1.5"
-          strokeDasharray="12 24"
-          initial={{ strokeDashoffset: 0 }}
-          animate={canAnimate ? { strokeDashoffset: -72 } : {}}
-          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-        />
-        <motion.path
-          d="M-80,700 C300,680 600,720 900,690 S1200,710 1540,685"
-          fill="none" stroke="rgba(13,153,132,0.035)" strokeWidth="1.5"
-          strokeDasharray="12 24"
-          initial={{ strokeDashoffset: 0 }}
-          animate={canAnimate ? { strokeDashoffset: -72 } : {}}
-          transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-        />
-
-        {/* Horizontal wave divider at ~70% height */}
-        <motion.path
-          fill="none" stroke="rgba(13,153,132,0.06)" strokeWidth="1"
-          initial={{ d: 'M0,630 C180,610 360,650 540,620 S900,640 1080,615 S1320,635 1440,620', pathLength: 0 }}
-          animate={inView ? {
-            pathLength: 1,
-            d: canAnimate ? [
-              'M0,630 C180,610 360,650 540,620 S900,640 1080,615 S1320,635 1440,620',
-              'M0,625 C180,645 360,615 540,635 S900,615 1080,640 S1320,620 1440,630',
-              'M0,630 C180,610 360,650 540,620 S900,640 1080,615 S1320,635 1440,620',
-            ] : undefined,
-          } : {}}
-          transition={{
-            pathLength: { duration: 0.8, delay: 1.6, ease: [0.16, 1, 0.3, 1] },
-            d: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        />
-
-        {/* Floating particles — circles + rotating diamonds */}
-        {canAnimate && particles.map((p, i) => (
-          p.isDiamond ? (
-            <motion.rect
-              key={i}
-              x={p.cx - 2} y={p.cy - 2} width="4" height="4" rx="0.5"
-              fill={`rgba(13,153,132,${p.opacity})`}
-              initial={{ opacity: 0, y: 0, rotate: 0 }}
-              animate={{
-                opacity: [0, p.opacity + 0.06, p.opacity + 0.02, 0],
-                y: [0, -p.driftY * 0.3, -p.driftY * 0.7, -p.driftY],
-                x: [0, p.swayX, -p.swayX * 0.5, p.swayX * 0.3],
-                rotate: [0, 180, 360],
-              }}
-              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'linear' }}
-              style={{ transformOrigin: `${p.cx}px ${p.cy}px` }}
-            />
-          ) : (
-            <motion.circle
-              key={i}
-              cx={p.cx} cy={p.cy} r={p.r}
-              fill={`rgba(13,153,132,${p.opacity})`}
-              initial={{ opacity: 0, y: 0 }}
-              animate={{
-                opacity: [0, p.opacity + 0.06, p.opacity + 0.02, 0],
-                y: [0, -p.driftY * 0.3, -p.driftY * 0.7, -p.driftY],
-                x: [0, p.swayX, -p.swayX * 0.5, p.swayX * 0.3],
-              }}
-              transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'linear' }}
-            />
-          )
+      <svg
+        ref={svgRef}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
+        aria-hidden="true"
+      >
+        {CONSTELLATION_EDGES.map((_edge, i) => (
+          <line
+            key={i}
+            ref={el => { nodesRef.current; edgesRef.current[i] = el }}
+            stroke="rgba(13,153,132,0.5)"
+            strokeWidth="0.08"
+            opacity="0.05"
+          />
+        ))}
+        {CONSTELLATION_NODES.map((node, i) => (
+          <circle
+            key={i}
+            ref={el => { nodesRef.current[i] = el }}
+            cx={node.bx * 100}
+            cy={node.by * 100}
+            r="0.4"
+            fill="#0D9984"
+            opacity="0.2"
+          />
         ))}
       </svg>
     </motion.div>
@@ -301,68 +305,107 @@ function AnimatedSVGBackground({ inView }: { inView: boolean }) {
 }
 
 /* ───────────────────────────────────────────────────
-   Blur Glow Orbs
+   Ambient Orbs
    ─────────────────────────────────────────────────── */
-function BlurOrbs({ inView }: { inView: boolean }) {
+function AmbientOrbs({ inView }: { inView: boolean }) {
   const [isMobile, setIsMobile] = useState(false)
-  const [prefersReduced, setPrefersReduced] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768)
-    setPrefersReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  }, [])
-
-  const canAnimate = !prefersReduced && !isMobile
+  useEffect(() => { setIsMobile(window.innerWidth < 768) }, [])
 
   return (
     <motion.div
-      className="pointer-events-none absolute inset-0 z-[2] overflow-hidden"
+      className="pointer-events-none absolute inset-0 overflow-hidden"
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      transition={{ duration: 1.2 }}
+      transition={{ duration: 1.5 }}
       aria-hidden="true"
     >
-      <motion.div
-        className="absolute"
+      <motion.div className="absolute"
         style={{
-          left: '18%', top: '42%',
-          width: isMobile ? 175 : 350, height: isMobile ? 175 : 350,
-          background: 'radial-gradient(circle, rgba(13,153,132,0.07), transparent 70%)',
-          filter: `blur(${isMobile ? 50 : 100}px)`,
+          left: '5%', top: '10%',
+          width: isMobile ? 180 : 420, height: isMobile ? 180 : 420,
+          background: 'radial-gradient(circle, rgba(13,153,132,0.08), transparent 70%)',
+          filter: `blur(${isMobile ? 50 : 120}px)`,
         }}
-        animate={canAnimate ? { x: [0, 25, -12, 0], y: [0, -15, 12, 0] } : {}}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        animate={!isMobile ? { x: [0, 20, -12, 0], y: [0, -18, 12, 0] } : {}}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
       />
-      {!isMobile && (
-        <motion.div
-          className="absolute"
-          style={{
-            right: '10%', top: '48%',
-            width: 280, height: 280,
-            background: 'radial-gradient(circle, rgba(13,153,132,0.05), transparent 70%)',
-            filter: 'blur(80px)',
-          }}
-          animate={canAnimate ? { x: [0, -18, 14, 0], y: [0, 22, -12, 0] } : {}}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      )}
-      <motion.div
-        className="absolute"
+      <motion.div className="absolute"
         style={{
-          left: '25%', bottom: '6%',
-          width: isMobile ? 250 : 500, height: isMobile ? 100 : 200,
-          background: 'radial-gradient(ellipse, rgba(13,153,132,0.05), transparent 70%)',
-          filter: `blur(${isMobile ? 50 : 70}px)`,
+          right: '8%', bottom: '15%',
+          width: isMobile ? 140 : 320, height: isMobile ? 140 : 320,
+          background: 'radial-gradient(circle, rgba(245,166,35,0.04), transparent 70%)',
+          filter: `blur(${isMobile ? 40 : 100}px)`,
         }}
-        animate={canAnimate ? { scaleX: [1, 1.15, 1], opacity: [0.8, 1, 0.8] } : {}}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        animate={!isMobile ? { x: [0, -15, 10, 0], y: [0, 12, -8, 0] } : {}}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div className="absolute"
+        style={{
+          left: '40%', top: '55%',
+          width: isMobile ? 120 : 280, height: isMobile ? 120 : 280,
+          background: 'radial-gradient(circle, rgba(2,80,128,0.06), transparent 70%)',
+          filter: `blur(${isMobile ? 35 : 90}px)`,
+        }}
+        animate={!isMobile ? { x: [0, -8, 16, 0], y: [0, 8, -6, 0] } : {}}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
       />
     </motion.div>
   )
 }
 
 /* ───────────────────────────────────────────────────
-   Premium Pain Card
+   Cursor Glow (desktop only)
+   ─────────────────────────────────────────────────── */
+function CursorGlow() {
+  const glowRef = useRef<HTMLDivElement>(null)
+  const pos = useRef({ x: 0, y: 0 })
+  const smooth = useRef({ x: 0, y: 0 })
+
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return
+
+    const section = glowRef.current?.closest('section')
+    if (!section) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect()
+      pos.current.x = e.clientX - rect.left
+      pos.current.y = e.clientY - rect.top
+    }
+    section.addEventListener('mousemove', handleMouseMove)
+
+    let raf: number
+    const animate = () => {
+      smooth.current.x += (pos.current.x - smooth.current.x) * 0.05
+      smooth.current.y += (pos.current.y - smooth.current.y) * 0.05
+      if (glowRef.current) {
+        glowRef.current.style.transform = `translate(${smooth.current.x - 350}px, ${smooth.current.y - 350}px)`
+      }
+      raf = requestAnimationFrame(animate)
+    }
+    raf = requestAnimationFrame(animate)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      section.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={glowRef}
+      className="pointer-events-none absolute hidden h-[700px] w-[700px] rounded-full lg:block"
+      style={{
+        background: 'radial-gradient(circle, rgba(13,153,132,0.07), transparent 60%)',
+        filter: 'blur(30px)',
+        willChange: 'transform',
+      }}
+    />
+  )
+}
+
+/* ───────────────────────────────────────────────────
+   Pain Card (dark glassmorphism)
    ─────────────────────────────────────────────────── */
 function PainCard({
   point, index, inView,
@@ -372,88 +415,69 @@ function PainCard({
   inView: boolean
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const glowX = useMotionValue(50)
-  const glowY = useMotionValue(50)
   const [hovered, setHovered] = useState(false)
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
-    glowX.set(((e.clientX - rect.left) / rect.width) * 100)
-    glowY.set(((e.clientY - rect.top) / rect.height) * 100)
-  }, [glowX, glowY])
+    cardRef.current.style.setProperty('--card-glow-x', `${e.clientX - rect.left}px`)
+    cardRef.current.style.setProperty('--card-glow-y', `${e.clientY - rect.top}px`)
+    cardRef.current.style.setProperty('--card-glow-opacity', '1')
+  }, [])
+
+  const handleMouseLeave = () => {
+    setHovered(false)
+    cardRef.current?.style.setProperty('--card-glow-opacity', '0')
+  }
 
   const IconComponent = iconComponents[index]
   const tag = severityTags[index]
-  const ghostNum = String(index + 1).padStart(2, '0')
 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 30, scale: 0.97 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ delay: 1.1 + index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.08, duration: 0.6, ease: EASE }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); glowX.set(50); glowY.set(50) }}
-      className="group relative overflow-hidden rounded-[28px] p-7 md:p-9
-        border border-secondary/[0.06]
-        shadow-[0_2px_8px_rgba(2,27,51,0.03),0_0_0_1px_rgba(13,153,132,0.03)]
-        transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-        hover:-translate-y-1.5 hover:scale-[1.015]
-        hover:shadow-[0_8px_24px_rgba(2,27,51,0.06),0_20px_48px_rgba(13,153,132,0.06),0_0_0_1px_rgba(13,153,132,0.08)]
-        hover:border-secondary/[0.12]
-        active:scale-[0.98] md:active:scale-100"
-      style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFFFE 100%)' }}
+      onMouseLeave={handleMouseLeave}
+      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] md:p-10"
     >
-      {/* Cursor-tracking radial glow (desktop only) */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 hidden opacity-0 transition-opacity duration-500 group-hover:opacity-100 md:block"
+      {/* Cursor-tracking glow */}
+      <div
+        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
         style={{
-          background: `radial-gradient(circle 250px at ${glowX.get()}% ${glowY.get()}%, rgba(13,153,132,0.06), transparent)`,
+          background: 'radial-gradient(circle 200px at var(--card-glow-x, 50%) var(--card-glow-y, 50%), rgba(13,153,132,0.1), transparent 60%)',
+          opacity: 'var(--card-glow-opacity, 0)',
         }}
       />
 
-      {/* Hover bg tint */}
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #F5FFFE 100%)' }}
-      />
-
-      {/* Left accent bar with glow */}
-      <div className="absolute left-0 top-[15%] h-[70%] w-[3px] origin-center scale-y-0 rounded-full bg-secondary transition-all duration-500 group-hover:scale-y-100 group-hover:shadow-[3px_0_10px_rgba(13,153,132,0.1)]" />
-
       {/* Ghost number */}
-      <motion.span
-        className="absolute right-4 top-3 select-none font-heading text-[60px] font-extrabold leading-none text-secondary/[0.05] transition-all duration-[600ms] group-hover:text-secondary/[0.1] group-hover:-translate-x-[3px] md:right-6 md:top-4 md:text-[80px]"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.3 + index * 0.1, duration: 0.5 }}
-      >
-        {ghostNum}
-      </motion.span>
+      <span className="absolute right-4 top-2 select-none font-heading text-[64px] font-extrabold leading-none text-white/[0.04]">
+        {ghostNumbers[index]}
+      </span>
+
+      {/* Hover border glow */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl border border-transparent transition-colors duration-500 group-hover:border-secondary/20" />
 
       <div className="relative">
-        {/* Icon with idle ring + hover glow */}
-        <div className="relative inline-flex h-20 w-20 items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-secondary/[0.05] bg-[radial-gradient(circle,rgba(13,153,132,0.03),transparent_70%)] transition-all duration-[400ms] group-hover:border-secondary/[0.1] group-hover:bg-[radial-gradient(circle,rgba(13,153,132,0.07),transparent_70%)] group-hover:shadow-[0_0_16px_rgba(13,153,132,0.08)]" />
-          <div className="relative">
-            {IconComponent && <IconComponent animate={inView} hovered={hovered} />}
-          </div>
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/[0.08] text-secondary-400 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/[0.12]">
+          {IconComponent && <IconComponent animate={inView} hovered={hovered} />}
         </div>
-
-        <h3 className="mt-6 font-heading text-[18px] font-semibold text-primary-600 md:text-[20px]">
+        <h3 className="mt-6 font-heading text-[18px] font-semibold text-white">
           {point.title}
         </h3>
-        <p className="mt-3 text-[14px] leading-[1.75] text-gray-500 md:text-[15px]">
+        <p className="mt-3 text-[15px] leading-[1.7] text-white/50">
           {point.description}
         </p>
-
         {tag && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 1.5 + index * 0.1, duration: 0.3 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
             className="mt-5"
           >
             <span className={`inline-block rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.5px] ${tag.colors}`}>
@@ -467,7 +491,7 @@ function PainCard({
 }
 
 /* ───────────────────────────────────────────────────
-   Squiggle Underline with stronger glow
+   Squiggle Underline
    ─────────────────────────────────────────────────── */
 function SquiggleUnderline() {
   return (
@@ -491,59 +515,163 @@ function SquiggleUnderline() {
 }
 
 /* ───────────────────────────────────────────────────
-   Problem Section — Premium V3
+   Floating Particles
    ─────────────────────────────────────────────────── */
+const SHAPE_COUNT = 18
+const shapes = Array.from({ length: SHAPE_COUNT }, (_, i) => ({
+  x: 3 + Math.random() * 94,
+  y: 3 + Math.random() * 94,
+  size: 3 + Math.random() * 5,
+  kind: (i % 3) as 0 | 1 | 2,
+  opacity: 0.03 + Math.random() * 0.06,
+  speed: 20 + Math.random() * 20,
+  delay: Math.random() * -18,
+  anim: i % 4,
+}))
 
+function FloatingShapes({ inView }: { inView: boolean }) {
+  const [prefersReduced, setPrefersReduced] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    setPrefersReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    setIsMobile(window.innerWidth < 768)
+  }, [])
+  const canAnimate = !prefersReduced && inView
+  const visible = isMobile ? shapes.slice(0, 10) : shapes
+
+  return (
+    <motion.div
+      className="pointer-events-none absolute inset-0"
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 2 }}
+    >
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full" aria-hidden="true">
+        {visible.map((s, i) => {
+          const style = canAnimate
+            ? { animation: `probDrift${s.anim} ${s.speed}s ease-in-out ${s.delay}s infinite` }
+            : undefined
+          if (s.kind === 0) {
+            const h = s.size * 0.12
+            const w = s.size * 0.08
+            return (
+              <polygon key={i}
+                points={`${s.x},${s.y - h} ${s.x + w},${s.y} ${s.x},${s.y + h} ${s.x - w},${s.y}`}
+                fill={`rgba(13,153,132,${s.opacity})`} stroke={`rgba(13,153,132,${s.opacity * 0.5})`}
+                strokeWidth="0.04" style={style} />
+            )
+          }
+          if (s.kind === 1) {
+            const r = s.size * 0.08
+            const pts = Array.from({ length: 6 }, (_, j) => {
+              const a = (Math.PI / 3) * j - Math.PI / 2
+              return `${s.x + r * Math.cos(a)},${s.y + r * Math.sin(a)}`
+            }).join(' ')
+            return (
+              <polygon key={i} points={pts}
+                fill={`rgba(13,153,132,${s.opacity * 0.6})`} stroke={`rgba(13,153,132,${s.opacity})`}
+                strokeWidth="0.04" style={style} />
+            )
+          }
+          const half = s.size * 0.06
+          return (
+            <rect key={i} x={s.x - half} y={s.y - half} width={half * 2} height={half * 2}
+              fill={`rgba(13,153,132,${s.opacity * 0.5})`} stroke={`rgba(13,153,132,${s.opacity})`}
+              strokeWidth="0.03" transform={`rotate(45, ${s.x}, ${s.y})`} style={style} />
+          )
+        })}
+      </svg>
+    </motion.div>
+  )
+}
+
+/* ───────────────────────────────────────────────────
+   Problem Section — Dark Premium
+   ─────────────────────────────────────────────────── */
 export default function Problem() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const { ref: sectionInViewRef, inView: sectionInView } = useInView({ threshold: 0.05, triggerOnce: true })
-  const { ref: cardsRef, inView: cardsInView } = useInView({ threshold: 0.1, triggerOnce: true })
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -25])
-  const orbY = useTransform(scrollYProgress, [0, 1], [0, -12])
+  const { ref, inView } = useInView({ threshold: 0.05, triggerOnce: true })
 
   const headline = problem.headline
   const harderIndex = headline.lastIndexOf('Harder')
 
-  const setSectionRefs = useCallback(
-    (node: HTMLElement | null) => {
-      sectionRef.current = node
-      sectionInViewRef(node)
-    },
-    [sectionInViewRef]
-  )
-
   return (
-    <section ref={setSectionRefs} id="features" className="relative overflow-hidden py-20 md:py-28 lg:py-32">
-      {/* Animated SVG bg with parallax */}
-      <motion.div className="absolute inset-0" style={{ y: bgY }}>
-        <AnimatedSVGBackground inView={sectionInView} />
-      </motion.div>
+    <>
+      <style>{`
+        @keyframes probDrift0 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(10px, -7px) rotate(3deg); }
+        }
+        @keyframes probDrift1 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(-8px, 5px) rotate(-2deg); }
+        }
+        @keyframes probDrift2 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(5px, 9px) rotate(4deg); }
+        }
+        @keyframes probDrift3 {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          50% { transform: translate(-7px, -10px) rotate(-3deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .prob-animate * {
+            animation: none !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
 
-      {/* Blur orbs with parallax */}
-      <motion.div className="absolute inset-0" style={{ y: orbY }}>
-        <BlurOrbs inView={sectionInView} />
-      </motion.div>
+      <section
+        ref={ref}
+        id="features"
+        className="prob-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
+        style={{
+          background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
+        }}
+      >
+        {/* Grid overlay */}
+        <div className="pointer-events-none absolute inset-0" style={{ opacity: 0.03 }}>
+          <svg width="100%" height="100%">
+            <defs>
+              <pattern id="probGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#0D9984" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#probGrid)" />
+          </svg>
+        </div>
 
-      <Container>
-        <div className="relative z-10">
+        <FloatingShapes inView={inView} />
+        <ConstellationBg inView={inView} />
+        <AmbientOrbs inView={inView} />
+        <CursorGlow />
+
+        {/* Grain */}
+        <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.02]" aria-hidden="true">
+          <filter id="probGrain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#probGrain)" />
+        </svg>
+
+        <Container className="relative z-10">
           {/* Header */}
           <div className="text-center">
             <ScrollReveal>
               <div className="inline-flex items-center gap-3">
                 <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} className="h-[2px] w-10 origin-right bg-secondary" />
-                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary">
+                  transition={{ duration: 0.5, ease: EASE }} className="h-[2px] w-10 origin-right bg-secondary-400" />
+                <span className="text-[13px] font-bold uppercase tracking-[3px] text-secondary-400">
                   {problem.label}
                 </span>
                 <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="h-[2px] w-10 origin-left bg-secondary" />
+                  transition={{ duration: 0.5, delay: 0.1, ease: EASE }} className="h-[2px] w-10 origin-left bg-secondary-400" />
               </div>
             </ScrollReveal>
 
             {harderIndex >= 0 ? (
-              <h2 className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-primary-600 md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
+              <h2 className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
                 {headline.substring(0, harderIndex).split(' ').map((word, i) => (
                   <motion.span key={`${word}-${i}`}
                     initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
@@ -563,27 +691,26 @@ export default function Problem() {
               </h2>
             ) : (
               <SplitText as="h2"
-                className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-primary-600 md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
+                className="mx-auto mt-5 max-w-3xl font-heading text-[32px] font-bold leading-[1.15] text-white md:text-[40px] lg:text-[48px] lg:tracking-[-0.5px]">
                 {headline}
               </SplitText>
             )}
 
             <ScrollReveal delay={0.3}>
-              <p className="mx-auto mt-5 max-w-2xl text-[16px] leading-[1.75] text-gray-500 md:text-[17px]">
+              <p className="mx-auto mt-5 max-w-2xl text-[16px] leading-[1.75] text-white/50 md:text-[17px]">
                 {problem.subheadline}
               </p>
             </ScrollReveal>
           </div>
 
           {/* Cards */}
-          <div ref={cardsRef} className="mx-auto mt-14 grid max-w-5xl gap-4 sm:grid-cols-2 sm:gap-6 lg:mt-16">
+          <div className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-2 lg:mt-16">
             {problem.painPoints.map((point, i) => (
-              <PainCard key={point.title} point={point} index={i} inView={cardsInView} />
+              <PainCard key={point.title} point={point} index={i} inView={inView} />
             ))}
           </div>
-
-        </div>
-      </Container>
-    </section>
+        </Container>
+      </section>
+    </>
   )
 }
