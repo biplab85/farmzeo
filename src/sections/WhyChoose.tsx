@@ -350,7 +350,7 @@ export default function WhyChoose() {
             </div>
 
             {/* Vision callout */}
-            <ScrollReveal delay={0.3} className="mt-8">
+            <ScrollReveal delay={0.3} className="hidden mt-8">
               <div className="rounded-xl border-l-4 border-secondary bg-white/[0.04] p-5 backdrop-blur-sm sm:p-6">
                 <h4 className="font-heading text-[15px] font-semibold text-secondary-400">
                   {whyChoose.vision.headline}

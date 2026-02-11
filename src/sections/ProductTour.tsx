@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
 import ScrollReveal from '../components/ScrollReveal'
@@ -132,73 +132,80 @@ export default function ProductTour() {
 
           {/* Content area */}
           <div className="mx-auto mt-6 max-w-5xl sm:mt-10 lg:mt-12">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col gap-5 sm:gap-8 lg:flex-row lg:items-center lg:gap-12"
-              >
-                {/* Text */}
-                <div className="lg:w-[42%]">
-                  <div className="mb-3 text-secondary-400">
-                    {tabIcons[activeTab]}
-                  </div>
-                  <h3 className="font-heading text-[24px] font-bold text-white sm:text-[28px]">
-                    {productTour.modules[activeTab]?.title}
-                  </h3>
-                  <p className="mt-4 text-[16px] leading-[1.75] text-white/50 sm:text-[17px]">
-                    {productTour.modules[activeTab]?.description}
-                  </p>
+            <div className="relative">
+              {productTour.modules.map((mod, i) => (
+                <div
+                  key={mod.tab}
+                  className={`flex flex-col gap-5 sm:gap-8 lg:flex-row lg:items-center lg:gap-12 transition-opacity duration-350 ${
+                    activeTab === i
+                      ? 'relative opacity-100'
+                      : 'pointer-events-none absolute inset-0 opacity-0'
+                  }`}
+                >
+                  {/* Text */}
+                  <div className="lg:w-[42%]">
+                    <div
+                      key={`icon-${activeTab}-${i}`}
+                      className={`contentTabIcon mb-3 text-secondary-400 [&>svg]:h-9 [&>svg]:w-9 ${
+                        activeTab === i ? 'icon-draw' : ''
+                      }`}
+                    >
+                      {tabIcons[i]}
+                    </div>
+                    <h3 className="font-heading text-[24px] font-bold text-white sm:text-[28px]">
+                      {mod.title}
+                    </h3>
+                    <p className="mt-4 text-[16px] leading-[1.75] text-white/50 sm:text-[17px]">
+                      {mod.description}
+                    </p>
 
-                  {/* Dot pagination */}
-                  <div className="mt-8 flex gap-2">
-                    {productTour.modules.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleTabClick(i)}
-                        className={`h-2 rounded-full transition-all duration-400 ${
-                          activeTab === i
-                            ? 'w-8 bg-secondary'
-                            : 'w-2 bg-white/20 hover:bg-white/30'
-                        }`}
-                        aria-label={`Go to module ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Mockup */}
-                <div className="lg:w-[58%]">
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-1.5 shadow-2xl backdrop-blur-sm">
-                    <div className="rounded-xl bg-[#021B33]/80 p-3 sm:p-4 md:p-5">
-                      {/* Browser chrome */}
-                      <div className="mb-4 flex items-center gap-2">
-                        <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]" />
-                        <div className="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]" />
-                        <div className="h-2.5 w-2.5 rounded-full bg-[#27CA40]" />
-                        <div className="ml-3 h-5 flex-1 rounded-full bg-white/5 px-3 text-[10px] leading-5 text-white/20">
-                          {productTour.modules[activeTab]?.title}
-                        </div>
-                      </div>
-
-                      {/* Product image */}
-                      <div className="rounded-lg bg-white/[0.02] p-2">
-                        <img
-                          src={tabImages[productTour.modules[activeTab]?.title ?? '']}
-                          alt={productTour.modules[activeTab]?.title ?? ''}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-auto w-full rounded-md object-cover"
+                    {/* Dot pagination */}
+                    <div className="mt-8 flex gap-2">
+                      {productTour.modules.map((_, j) => (
+                        <button
+                          key={j}
+                          onClick={() => handleTabClick(j)}
+                          className={`h-2 rounded-full transition-all duration-400 ${
+                            activeTab === j
+                              ? 'w-8 bg-secondary'
+                              : 'w-2 bg-white/20 hover:bg-white/30'
+                          }`}
+                          aria-label={`Go to module ${j + 1}`}
                         />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mockup */}
+                  <div className="lg:w-[58%]">
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-1.5 shadow-2xl backdrop-blur-sm">
+                      <div className="rounded-xl bg-[#021B33]/80 p-3 sm:p-4 md:p-5">
+                        {/* Browser chrome */}
+                        <div className="mb-4 flex items-center gap-2">
+                          <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]" />
+                          <div className="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]" />
+                          <div className="h-2.5 w-2.5 rounded-full bg-[#27CA40]" />
+                          <div className="ml-3 h-5 flex-1 rounded-full bg-white/5 px-3 text-[10px] leading-5 text-white/20">
+                            {mod.title}
+                          </div>
+                        </div>
+
+                        {/* Product image */}
+                        <div className="rounded-lg bg-white/[0.02] p-2">
+                          <img
+                            src={tabImages[mod.title ?? '']}
+                            alt={mod.title ?? ''}
+                            loading="lazy"
+                            decoding="async"
+                            className="h-auto w-full rounded-md object-cover"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+              ))}
+            </div>
           </div>
         </Container>
       </div>

@@ -91,6 +91,24 @@ button {
   -webkit-backdrop-filter: blur(12px);
 }
 
+// SVG icon draw animation
+.icon-draw svg path,
+.icon-draw svg circle {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: iconDraw 0.8s ease forwards;
+}
+
+.icon-draw svg circle {
+  animation-delay: 0.15s;
+}
+
+@keyframes iconDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 // Reduced motion
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
