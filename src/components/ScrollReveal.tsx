@@ -26,10 +26,12 @@ export default function ScrollReveal({
     <motion.div
       initial={{
         opacity: 0,
+        filter: 'blur(6px)',
         ...directionMap[direction],
       }}
       whileInView={{
         opacity: 1,
+        filter: 'blur(0px)',
         x: 0,
         y: 0,
       }}

@@ -2,12 +2,14 @@
 export const nav = {
   logo: 'FARMZEO',
   links: [
+    { label: 'Home', href: '#hero' },
     { label: 'The Problem', href: '#problem' },
     { label: 'Solution', href: '#solution' },
-    { label: 'Product Tour', href: '#product-tour' },
+    { label: 'Product', href: '#product-tour' },
     { label: 'Features', href: '#features' },
     { label: 'About', href: '#about' },
     { label: 'FAQ', href: '#faq' },
+    { label: 'Contact', href: '#contact' },
   ],
   cta: { label: 'Get Started Free', href: '#contact' },
 }

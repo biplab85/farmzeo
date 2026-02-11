@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useRef, useEffect, useState, useCallback } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
@@ -22,6 +22,46 @@ const shapes = Array.from({ length: SHAPE_COUNT }, (_, i) => ({
   delay: Math.random() * -18,
   anim: i % 4,
 }))
+
+// ─── Organic Flowing Curves Background ───────────────────────
+
+function OrganicCurves() {
+  return (
+    <div className="pointer-events-none absolute inset-0" style={{ opacity: 0.04 }}>
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
+        <path
+          d="M-40 200 C200 150 400 280 600 200 S1000 120 1200 220 S1480 300 1480 300"
+          stroke="#0D9984" strokeWidth="1.2" fill="none" opacity="0.8"
+        />
+        <path
+          d="M-40 350 C150 300 350 420 550 350 S950 280 1150 380 S1480 450 1480 450"
+          stroke="#0D9984" strokeWidth="0.8" fill="none" opacity="0.6"
+        />
+        <path
+          d="M-40 500 C250 460 420 560 650 500 S1050 430 1250 520 S1480 580 1480 580"
+          stroke="#0D9984" strokeWidth="1" fill="none" opacity="0.7"
+        />
+        <path
+          d="M-40 650 C180 610 380 700 580 650 S980 590 1180 670 S1480 720 1480 720"
+          stroke="#025080" strokeWidth="0.6" fill="none" opacity="0.5"
+        />
+        {/* Leaf vein branching */}
+        <path
+          d="M600 200 C620 240 610 280 640 320"
+          stroke="#0D9984" strokeWidth="0.5" fill="none" opacity="0.4"
+        />
+        <path
+          d="M550 350 C570 310 590 290 600 260"
+          stroke="#0D9984" strokeWidth="0.4" fill="none" opacity="0.3"
+        />
+        <path
+          d="M1150 380 C1130 340 1140 300 1120 270"
+          stroke="#0D9984" strokeWidth="0.4" fill="none" opacity="0.3"
+        />
+      </svg>
+    </div>
+  )
+}
 
 // ─── Constellation Background ───────────────────────────────
 
@@ -150,7 +190,7 @@ function TealOrbs({ inView }: { inView: boolean }) {
   )
 }
 
-// ─── Benefit Card (glassmorphic dark variant) ───────────────
+// ─── Benefit Card (glassmorphic dark + 3D tilt) ───────────────
 
 function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)
@@ -159,13 +199,26 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
-    cardRef.current.style.setProperty('--card-glow-x', `${e.clientX - rect.left}px`)
-    cardRef.current.style.setProperty('--card-glow-y', `${e.clientY - rect.top}px`)
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    cardRef.current.style.setProperty('--card-glow-x', `${x}px`)
+    cardRef.current.style.setProperty('--card-glow-y', `${y}px`)
     cardRef.current.style.setProperty('--card-glow-opacity', '1')
+    // 3D tilt
+    const halfW = rect.width / 2
+    const halfH = rect.height / 2
+    const tiltX = ((y - halfH) / halfH) * -4
+    const tiltY = ((x - halfW) / halfW) * 4
+    cardRef.current.style.setProperty('--tilt-x', `${tiltX}deg`)
+    cardRef.current.style.setProperty('--tilt-y', `${tiltY}deg`)
   }
 
   const handleMouseLeave = () => {
-    cardRef.current?.style.setProperty('--card-glow-opacity', '0')
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--card-glow-opacity', '0')
+      cardRef.current.style.setProperty('--tilt-x', '0deg')
+      cardRef.current.style.setProperty('--tilt-y', '0deg')
+    }
   }
 
   return (
@@ -177,7 +230,11 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
       transition={{ delay: index * 0.08, duration: 0.6, ease: EASE }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-6 md:p-8 lg:p-10"
+      className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-[12px] transition-all duration-500 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-6 md:p-8 lg:p-10"
+      style={{
+        transform: 'perspective(800px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))',
+        transition: 'transform 0.3s ease-out, border-color 0.5s, background 0.5s, box-shadow 0.5s',
+      }}
     >
       {/* Cursor-tracking glow */}
       <div
@@ -214,7 +271,21 @@ function BenefitCard({ item, index }: { item: typeof benefits.items[0]; index: n
 // ─── Main Component ─────────────────────────────────────────
 
 export default function Benefits() {
-  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.1, triggerOnce: true })
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Merge refs
+  const setRefs = useCallback((node: HTMLElement | null) => {
+    sectionRef.current = node
+    inViewRef(node)
+  }, [inViewRef])
+
+  // Parallax
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '5%'])
 
   return (
     <>
@@ -244,13 +315,18 @@ export default function Benefits() {
       `}</style>
 
       <section
-        ref={ref}
+        ref={setRefs}
         id="features"
         className="ben-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
           background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
         }}
       >
+        {/* Organic curves with parallax */}
+        <motion.div className="absolute inset-0" style={{ y: bgY }}>
+          <OrganicCurves />
+        </motion.div>
+
         <ConstellationBg inView={inView} />
         <TealOrbs inView={inView} />
 

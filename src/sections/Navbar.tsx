@@ -16,7 +16,7 @@ export default function Navbar() {
       const progress = Math.min(window.scrollY / 80, 1)
       setScrollProgress(progress)
 
-      const sections = ['problem', 'solution', 'product-tour', 'features', 'about', 'faq']
+      const sections = ['hero', 'problem', 'solution', 'product-tour', 'features', 'about', 'faq', 'contact']
       let found = ''
       for (let i = sections.length - 1; i >= 0; i--) {
         const id = sections[i]!
@@ -236,7 +236,7 @@ export default function Navbar() {
                     />
                   )}
                   <span
-                    className="text-base font-semibold tracking-wide transition-all duration-300"
+                    className="flex items-center gap-2 text-base font-semibold tracking-wide transition-all duration-300"
                     style={{
                       color: isActive ? '#5EEAD4' : 'rgba(255,255,255,0.6)',
                       paddingLeft: isActive ? '8px' : '0',

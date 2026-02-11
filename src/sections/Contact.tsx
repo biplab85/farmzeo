@@ -154,6 +154,18 @@ export default function Contact() {
     <section ref={sectionRef} id="contact" className="relative overflow-hidden py-20 md:py-28 lg:py-32" style={{ background: 'linear-gradient(180deg, #F7FAFA 0%, #EEF5F4 50%, #F7FAFA 100%)' }}>
       <style>{mapCSS}</style>
 
+      {/* ── subtle dot grid overlay ── */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <svg className="h-full w-full">
+          <defs>
+            <pattern id="contactDotGrid" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+              <circle cx="16" cy="16" r="0.6" fill="rgba(13,153,132,0.08)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#contactDotGrid)" />
+        </svg>
+      </div>
+
       {/* ── abstract world map background ── */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center" aria-hidden="true">
         <svg viewBox="0 0 1200 600" fill="none" className="w-full h-full max-h-full map-drift" preserveAspectRatio="xMidYMid slice">
@@ -275,7 +287,7 @@ export default function Contact() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1, duration: 0.5 }}
-                      className="group flex items-start gap-4 rounded-xl border border-gray-200/60 bg-white/80 p-4 backdrop-blur-sm shadow-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:shadow-md hover:border-secondary/20"
+                      className="group flex items-start gap-4 rounded-xl border border-gray-200/60 bg-white/80 p-4 backdrop-blur-sm shadow-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:shadow-[0_8px_30px_rgba(13,153,132,0.12)] hover:border-secondary/20"
                     >
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary-50 text-secondary transition-all duration-300 group-hover:bg-secondary group-hover:text-white group-hover:shadow-[0_4px_16px_rgba(13,153,132,0.25)]">
                         {Icon && <Icon size={20} />}
@@ -314,7 +326,7 @@ export default function Contact() {
 
             {/* Right — form */}
             <ScrollReveal direction="right" className="lg:w-[62%]">
-              <div className="rounded-2xl border border-gray-200/60 bg-white/90 p-5 shadow-lg backdrop-blur-sm sm:p-6 md:p-8 lg:p-10">
+              <div className="rounded-2xl border border-gray-200/60 bg-white/90 p-5 shadow-[0_12px_40px_rgba(2,27,51,0.06),0_0_0_1px_rgba(13,153,132,0.04)] backdrop-blur-sm sm:p-6 md:p-8 lg:p-10">
                 <AnimatePresence mode="wait">
                   {submitted ? (
                     <motion.div
@@ -458,7 +470,7 @@ export default function Contact() {
                       {/* Submit */}
                       <button
                         type="submit"
-                        className="group relative w-full overflow-hidden rounded-xl bg-accent py-3.5 text-[15px] font-semibold sm:py-4 sm:text-[16px] text-dark transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow"
+                        className="group relative w-full overflow-hidden rounded-xl bg-accent py-3.5 text-[15px] font-semibold sm:py-4 sm:text-[16px] text-dark transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-amber-glow"
                       >
                         <span className="relative z-10 flex items-center justify-center gap-2">
                           Send Message

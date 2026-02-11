@@ -229,7 +229,7 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden">
+    <section ref={sectionRef} id="hero" className="relative overflow-hidden">
       <MeshGradient />
 
       {/* Premium cursor follower — hero only */}
@@ -274,7 +274,7 @@ export default function Hero() {
               <motion.div {...fadeUp(4)} className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
                 <a
                   href={hero.primaryCta.href}
-                  className="group relative overflow-hidden rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-dark transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow sm:px-8 sm:py-4 sm:text-[16px]"
+                  className="group relative overflow-hidden rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-dark transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-amber-glow sm:px-8 sm:py-4 sm:text-[16px]"
                 >
                   <span className="relative z-10 inline-flex items-center gap-2">
                     {hero.primaryCta.label}
@@ -287,7 +287,7 @@ export default function Hero() {
                 </a>
                 <a
                   href={hero.secondaryCta.href}
-                  className="group flex items-center gap-2.5 rounded-full border border-white/20 px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:border-white/40 hover:bg-white/5 sm:px-7 sm:py-3.5 sm:text-[15px]"
+                  className="group flex items-center gap-2.5 rounded-full border border-white/20 px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/5 hover:shadow-[0_4px_20px_rgba(255,255,255,0.06)] sm:px-7 sm:py-3.5 sm:text-[15px]"
                 >
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
                     <svg width="10" height="12" viewBox="0 0 10 12" fill="white"><path d="M0 0l10 6-10 6z" /></svg>

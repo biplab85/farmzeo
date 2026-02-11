@@ -20,15 +20,22 @@ body {
   font-family: $font-body;
   color: $color-gray-600;
   background-color: $color-white;
-  line-height: 1.65;
+  line-height: 1.72;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-heading;
   color: $color-navy-600;
-  line-height: 1.15;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
+
+h1, h2 { letter-spacing: -0.035em; }
+h3 { letter-spacing: -0.02em; }
+h4, h5, h6 { letter-spacing: -0.015em; }
 
 img {
   max-width: 100%;
@@ -106,6 +113,57 @@ button {
 @keyframes iconDraw {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+// Gradient border glow on hover
+.gradient-border {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(135deg, $color-teal, $color-accent);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Section flow divider — gradient glow line between sections
+.section-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba($color-teal, 0.25) 30%,
+    rgba($color-accent, 0.15) 60%,
+    transparent 95%
+  );
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -8px 10% -8px 10%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($color-teal, 0.06) 40%,
+      rgba($color-accent, 0.04) 60%,
+      transparent
+    );
+    filter: blur(8px);
+    pointer-events: none;
   }
 }
 

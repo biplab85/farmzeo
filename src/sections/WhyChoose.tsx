@@ -332,7 +332,25 @@ export default function WhyChoose() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="group flex gap-4 rounded-xl border border-white/[0.06] bg-white/[0.04] p-4 backdrop-blur-sm sm:p-5 transition-all duration-300 hover:translate-x-1 hover:bg-white/[0.07] hover:border-white/[0.12]"
+                  className="group flex gap-4 rounded-xl border border-white/[0.06] bg-white/[0.04] p-4 backdrop-blur-sm sm:p-5 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/[0.12]"
+                  style={{
+                    transform: 'perspective(800px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))',
+                    transition: 'transform 0.3s ease-out, background 0.3s, border-color 0.3s',
+                  }}
+                  onMouseMove={(e) => {
+                    const el = e.currentTarget
+                    const rect = el.getBoundingClientRect()
+                    const x = e.clientX - rect.left
+                    const y = e.clientY - rect.top
+                    const tiltX = ((y - rect.height / 2) / (rect.height / 2)) * -4
+                    const tiltY = ((x - rect.width / 2) / (rect.width / 2)) * 4
+                    el.style.setProperty('--tilt-x', `${tiltX}deg`)
+                    el.style.setProperty('--tilt-y', `${tiltY}deg`)
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.setProperty('--tilt-x', '0deg')
+                    e.currentTarget.style.setProperty('--tilt-y', '0deg')
+                  }}
                 >
                   <div className="mt-0.5">
                     <AnimatedCheck delay={0.2 + i * 0.1} />

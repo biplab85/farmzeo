@@ -38,8 +38,8 @@ export default {
         light: '#F8FAFB',
       },
       fontFamily: {
-        heading: ['"DM Sans"', 'sans-serif'],
-        body: ['"DM Sans"', 'sans-serif'],
+        heading: ['"Playfair Display"', 'Georgia', 'serif'],
+        body: ['"Inter"', 'system-ui', 'sans-serif'],
       },
       maxWidth: {
         '8xl': '1400px',
@@ -58,7 +58,8 @@ export default {
         xl: '0 20px 60px rgba(2,27,51,0.12)',
         glow: '0 0 40px rgba(13,153,132,0.15)',
         'glow-lg': '0 0 80px rgba(13,153,132,0.2)',
-        'amber-glow': '0 0 30px rgba(245,166,35,0.3)',
+        'amber-glow': '0 0 40px rgba(245,166,35,0.35), 0 0 80px rgba(245,166,35,0.15)',
+        'teal-glow': '0 0 40px rgba(13,153,132,0.3), 0 0 80px rgba(13,153,132,0.12)',
       },
       animation: {
         float: 'float 4s ease-in-out infinite',

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useRef, useEffect, useState, useCallback } from 'react'
 import Container from '../components/Container'
@@ -203,7 +203,7 @@ function CursorGlow() {
 }
 
 /* ───────────────────────────────────────────────────
-   Pain Card (dark glassmorphism)
+   Pain Card (dark glassmorphism + 3D tilt)
    ─────────────────────────────────────────────────── */
 function PainCard({
   point, index, inView,
@@ -218,14 +218,27 @@ function PainCard({
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
-    cardRef.current.style.setProperty('--card-glow-x', `${e.clientX - rect.left}px`)
-    cardRef.current.style.setProperty('--card-glow-y', `${e.clientY - rect.top}px`)
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    cardRef.current.style.setProperty('--card-glow-x', `${x}px`)
+    cardRef.current.style.setProperty('--card-glow-y', `${y}px`)
     cardRef.current.style.setProperty('--card-glow-opacity', '1')
+    // 3D tilt
+    const halfW = rect.width / 2
+    const halfH = rect.height / 2
+    const tiltX = ((y - halfH) / halfH) * -4
+    const tiltY = ((x - halfW) / halfW) * 4
+    cardRef.current.style.setProperty('--tilt-x', `${tiltX}deg`)
+    cardRef.current.style.setProperty('--tilt-y', `${tiltY}deg`)
   }, [])
 
   const handleMouseLeave = () => {
     setHovered(false)
-    cardRef.current?.style.setProperty('--card-glow-opacity', '0')
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--card-glow-opacity', '0')
+      cardRef.current.style.setProperty('--tilt-x', '0deg')
+      cardRef.current.style.setProperty('--tilt-y', '0deg')
+    }
   }
 
   const IconComponent = iconComponents[index]
@@ -241,7 +254,11 @@ function PainCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-[12px] transition-all duration-500 hover:-translate-y-2 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-6 md:p-8 lg:p-10"
+      className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-[12px] transition-all duration-500 hover:border-secondary/20 hover:bg-white/[0.07] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_0_1px_rgba(13,153,132,0.1)] sm:p-6 md:p-8 lg:p-10"
+      style={{
+        transform: 'perspective(800px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))',
+        transition: 'transform 0.3s ease-out, border-color 0.5s, background 0.5s, box-shadow 0.5s',
+      }}
     >
       {/* Cursor-tracking glow */}
       <div
@@ -264,25 +281,27 @@ function PainCard({
         <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/[0.08] text-secondary-400 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/[0.12]">
           {IconComponent && <IconComponent animate={inView} hovered={hovered} />}
         </div>
-        <h3 className="mt-6 font-heading text-[18px] font-semibold text-white">
-          {point.title}
-        </h3>
-        <p className="mt-3 text-[15px] leading-[1.7] text-white/50">
-          {point.description}
-        </p>
-        {tag && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
-            className="mt-5"
-          >
-            <span className={`inline-block rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.5px] ${tag.colors}`}>
-              {tag.label}
-            </span>
-          </motion.div>
-        )}
+        <div>
+          <h3 className="mt-6 font-heading text-[18px] font-semibold text-white">
+            {point.title}
+          </h3>
+          <p className="mt-3 text-[15px] leading-[1.7] text-white/50">
+            {point.description}
+          </p>
+          {tag && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + index * 0.1, duration: 0.3 }}
+              className="mt-5"
+            >
+              <span className={`inline-block rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.5px] ${tag.colors}`}>
+                {tag.label}
+              </span>
+            </motion.div>
+          )}
+        </div>
       </div>
     </motion.div>
   )
@@ -313,10 +332,54 @@ function SquiggleUnderline() {
 }
 
 /* ───────────────────────────────────────────────────
+   Hexagonal Honeycomb Pattern
+   ─────────────────────────────────────────────────── */
+function HexPattern() {
+  return (
+    <div className="pointer-events-none absolute inset-0" style={{ opacity: 0.04 }}>
+      <svg width="100%" height="100%">
+        <defs>
+          <pattern id="probHex" width="56" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
+            <path
+              d="M28 0 L56 14 L56 34.5 L28 48.5 L0 34.5 L0 14 Z"
+              fill="none"
+              stroke="#0D9984"
+              strokeWidth="0.5"
+            />
+            <path
+              d="M28 48.5 L56 34.5 L56 62.5 L28 48.5"
+              fill="none"
+              stroke="#0D9984"
+              strokeWidth="0.3"
+              opacity="0.5"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#probHex)" />
+      </svg>
+    </div>
+  )
+}
+
+/* ───────────────────────────────────────────────────
    Problem Section — Dark Premium
    ─────────────────────────────────────────────────── */
 export default function Problem() {
-  const { ref, inView } = useInView({ threshold: 0.05, triggerOnce: true })
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.05, triggerOnce: true })
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Merge refs
+  const setRefs = useCallback((node: HTMLElement | null) => {
+    sectionRef.current = node
+    inViewRef(node)
+  }, [inViewRef])
+
+  // Parallax
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '5%'])
 
   const headline = problem.headline
   const harderIndex = headline.lastIndexOf('Harder')
@@ -349,24 +412,17 @@ export default function Problem() {
       `}</style>
 
       <section
-        ref={ref}
+        ref={setRefs}
         id="problem"
         className="prob-animate relative overflow-hidden py-20 md:py-28 lg:py-32"
         style={{
           background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
         }}
       >
-        {/* Grid overlay */}
-        <div className="pointer-events-none absolute inset-0" style={{ opacity: 0.03 }}>
-          <svg width="100%" height="100%">
-            <defs>
-              <pattern id="probGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#0D9984" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#probGrid)" />
-          </svg>
-        </div>
+        {/* Hexagonal honeycomb pattern with parallax */}
+        <motion.div className="absolute inset-0" style={{ y: bgY }}>
+          <HexPattern />
+        </motion.div>
 
         <CursorGlow />
 

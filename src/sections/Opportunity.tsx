@@ -446,7 +446,7 @@ export default function Opportunity() {
           {/* CTA */}
           <ScrollReveal delay={0.6} className="mt-12 text-center lg:mt-14">
             <a href={opportunity.cta.href}
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-emerald-500 px-6 py-3 text-[15px] font-semibold text-white sm:px-8 sm:py-4 sm:text-[16px] transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-400 hover:shadow-[0_8px_30px_rgba(16,185,129,0.3)]">
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-emerald-500 px-6 py-3 text-[15px] font-semibold text-white sm:px-8 sm:py-4 sm:text-[16px] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:bg-emerald-400 hover:shadow-[0_8px_40px_rgba(16,185,129,0.35),0_0_80px_rgba(16,185,129,0.12)]">
               <span className="relative z-10">{opportunity.cta.label}</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                 className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5">

@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Container from '../components/Container'
 import SplitText from '../components/SplitText'
@@ -558,8 +558,22 @@ function MockupDisplay({ active, onTabClick }: { active: number; onTabClick: (i:
 
 export default function Solution() {
   const [active, setActive] = useState(0)
-  const { ref: sectionRef, inView } = useInView({ threshold: 0.1, triggerOnce: true })
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.1, triggerOnce: true })
+  const sectionElRef = useRef<HTMLElement>(null)
   const mockupRef = useRef<HTMLDivElement>(null)
+
+  // Merge refs
+  const sectionRef = useCallback((node: HTMLElement | null) => {
+    sectionElRef.current = node
+    inViewRef(node)
+  }, [inViewRef])
+
+  // Parallax for topographic lines
+  const { scrollYProgress } = useScroll({
+    target: sectionElRef,
+    offset: ['start end', 'end start'],
+  })
+  const topoY = useTransform(scrollYProgress, [0, 1], ['0%', '5%'])
 
   const handleMockupMove = (e: React.MouseEvent) => {
     if (!mockupRef.current) return
@@ -610,8 +624,10 @@ export default function Solution() {
           background: 'linear-gradient(160deg, #0B2A3F 0%, #0A1E30 35%, #081620 70%, #050E18 100%)',
         }}
       >
-        {/* Premium background */}
-        <PremiumBg inView={inView} />
+        {/* Premium background with parallax */}
+        <motion.div className="absolute inset-0" style={{ y: topoY }}>
+          <PremiumBg inView={inView} />
+        </motion.div>
         <SolOrbs inView={inView} />
         <SolCursorSVG />
 

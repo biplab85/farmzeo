@@ -212,7 +212,7 @@ export default function FAQ() {
             fill="rgba(13,153,132,0.6)"
             fontSize="20"
             fontWeight="700"
-            fontFamily="DM Sans, sans-serif"
+            fontFamily="Playfair Display, Georgia, serif"
           >
             ?
           </text>
@@ -240,7 +240,7 @@ export default function FAQ() {
             <ScrollReveal delay={0.4}>
               <a
                 href="#contact"
-                className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-secondary/60 px-6 py-3 text-[15px] font-semibold text-secondary-400 transition-all duration-300 hover:bg-secondary hover:text-white hover:border-secondary"
+                className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-secondary/60 px-6 py-3 text-[15px] font-semibold text-secondary-400 transition-all duration-300 hover:-translate-y-0.5 hover:bg-secondary hover:text-white hover:border-secondary hover:shadow-teal-glow"
               >
                 Contact Support
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

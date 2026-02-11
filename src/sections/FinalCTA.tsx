@@ -57,7 +57,7 @@ export default function FinalCTA() {
               <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                 <a
                   href={finalCta.primaryCta.href}
-                  className="group relative overflow-hidden rounded-full bg-accent px-6 py-3 text-[14px] font-semibold text-dark sm:px-8 sm:py-3.5 sm:text-[15px] md:px-10 md:py-4 md:text-[16px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-glow"
+                  className="group relative overflow-hidden rounded-full bg-accent px-6 py-3 text-[14px] font-semibold text-dark sm:px-8 sm:py-3.5 sm:text-[15px] md:px-10 md:py-4 md:text-[16px] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-amber-glow"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     {finalCta.primaryCta.label}
@@ -72,7 +72,7 @@ export default function FinalCTA() {
                 </a>
                 <a
                   href={finalCta.secondaryCta.href}
-                  className="group rounded-full border border-white/20 px-6 py-3 text-[14px] font-medium text-white sm:px-8 sm:py-3.5 sm:text-[15px] md:px-10 md:py-4 md:text-[16px] transition-all duration-300 hover:border-white/40 hover:bg-white/5"
+                  className="group rounded-full border border-white/20 px-6 py-3 text-[14px] font-medium text-white sm:px-8 sm:py-3.5 sm:text-[15px] md:px-10 md:py-4 md:text-[16px] transition-all duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/5 hover:shadow-[0_4px_20px_rgba(255,255,255,0.06)]"
                 >
                   <span className="flex items-center gap-2">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-translate-y-0.5">
